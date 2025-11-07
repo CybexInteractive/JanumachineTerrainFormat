@@ -49,18 +49,14 @@ Compact binary terrain heightmap format for 3D applications and game engines.
 ### 📏 Limits
 | Parameter | Value |
 | :--- | :--- |
-| Max Width/Height | <code><span style="color: #abc8a8;">8193</span></code> |
+| Max Width/Height | <code><span style="color: #abc8a8;">4097</span></code> |
 | Allowed bitDepth | <code><span style="color: #abc8a8;">32</span></code> , <code><span style="color: #abc8a8;">64</span></code> |
 | Reserved bytes | Must be <code><span style="color: #abc8a8;">0</span></code> until future spec |
 
 
 > [!NOTE] 
-> __<ins> Why <span style="color: #abc8a8;">8193</span>?</ins>__  
-> An (unreasonable but less limiting) <code><span style="color: #abc8a8;">8192</span></code> grid cells plus <code><span style="color: #abc8a8;">1</span></code> extra point per axis for height-fiels mesh topology.
-<!--
-`❓`__<ins> Why <span style="color: #abc8a8;">8193</span>?</ins>__  
-An (unreasonable but less limiting) <code><span style="color: #abc8a8;">8192</span></code> grid cells plus <code><span style="color: #abc8a8;">1</span></code> extra point per axis for height-fiels mesh topology.
--->
+> __<ins> Why <span style="color: #abc8a8;">4097</span>?</ins>__  
+> An (unreasonable but less limiting) <code><span style="color: #abc8a8;">4096</span></code> grid cells plus <code><span style="color: #abc8a8;">1</span></code> extra point per axis for height-fiels mesh topology.
 
 ### 📐 Row-Major Ordering
 Sample index: <code><span style="color: #9cdcfe;">index</span> = <span style="color: #9cdcfe;">y</span> * <span style="color: #9cdcfe;">width</span> + <span style="color: #9cdcfe;">x</span></code>  
@@ -111,8 +107,8 @@ String form &hairsp;<code><span style="color: #bfbf00;">"\x8AJTF\r\n\x1B\n"</spa
 | Chunk Type | 4 | `ASCII` | <code><span style="color: #bfbf00;">"HEAD"</span></code> |
 | Version Major | 1 | <code><span style="color: #5798d9;">byte</span></code> ||
 | Version Minor | 1 | <code><span style="color: #5798d9;">byte</span></code> ||
-| Width | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid width (limited to <code><span style="color: #abc8a8;">8193</span></code>) |
-| Height | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid height (limited to <code><span style="color: #abc8a8;">8193</span></code>) |
+| Width | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid width (limited to <code><span style="color: #abc8a8;">4097</span></code>) |
+| Height | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid height (limited to <code><span style="color: #abc8a8;">4097</span></code>) |
 | Bit Depth | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Bits per Sample (<code><span style="color: #abc8a8;">32</span></code> = <code><span style="color: #5798d9;">float</span></code>, <code><span style="color: #abc8a8;">64</span></code> = <code><span style="color: #5798d9;">double</span></code>) |
 | Reserved | 8 | <code><span style="color: #5c9064;">UInt64</span></code> | Padding / unused / reserved for future use. Must be zero.|
 | Bounds Lower | 4 | <code><span style="color: #5c9064;">Int32</span></code> | Floor of lowest elevation. |

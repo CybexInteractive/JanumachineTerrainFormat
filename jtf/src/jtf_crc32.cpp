@@ -6,7 +6,7 @@
 
 namespace cybex_interactive::jtf
 {
-	void Crc32::Append(const void* data, size_t length) noexcept
+	void Crc32::Append(const uint8_t* data, size_t length) noexcept
 	{
 		const uint8_t* bytes = static_cast<const uint8_t*>(data);
 		uint32_t crc = m_value;
@@ -17,7 +17,7 @@ namespace cybex_interactive::jtf
 		m_value = crc;
 	}
 
-	uint32_t Crc32::Hash(const void* data, size_t length) noexcept
+	uint32_t Crc32::Hash(const uint8_t* data, size_t length) noexcept
 	{
 		Crc32 crc;
 		crc.Append(data, length);

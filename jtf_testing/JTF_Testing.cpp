@@ -1,5 +1,6 @@
-// JTF_Testing.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// MIT License
+// © 2025 Cybex Interactive & Matthias Simon Gut (aka Cybex)
+// See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/refs/heads/develop/LICENSE.md).
 
 #include "jtf.h"
 #include <iostream>
@@ -10,11 +11,12 @@ int main()
 
 	using namespace cybex_interactive::jtf; // shortcut for JTFFile
 
-	std::vector<double> heights(16, 1.23); // example data (4x4 heightmap)
+	std::string filePath = "D:/Users/Matthias/Documents/Throwaway/JTF Tests/CppJTFTest.jtf";
+	std::vector<float> heights(16, 1.23f); // example data (4x4 heightmap)
 	try
 	{
 		JTFFile::Write(
-			"test_output.jtf",
+			filePath,
 			4,       // width
 			4,       // height
 			-50,     // bounds lower
@@ -29,27 +31,16 @@ int main()
 		std::cerr << "Error: " << e.what() << "\n";
 	}
 
-	try
+	/*try
 	{
-		JTFFile::Read("test_output.jtf");
+		JTFFile::Read(filePath);
 
 		std::cout << "JTF read test succeeded.\n";
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << "Error: " << e.what() << "\n";
-	}
+	}*/
 
 	return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

@@ -27,5 +27,5 @@ namespace cybex_interactive::jtf
 	};
 
 	constexpr uint64_t JTF_SIGNATURE = 0x8A4A54460D0A1B0A;
-	constexpr long MAP_AXIS_SIZE_LIMIT = 8193;
+	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 }

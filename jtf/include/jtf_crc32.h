@@ -16,7 +16,7 @@ namespace cybex_interactive::jtf
 		constexpr Crc32() noexcept : m_value(0xFFFFFFFFu) {}
 
 		/// <summary>Appends the contents of `source` to the data already processed for the current hash computation.</summary>
-		void Append(const void* source, size_t length) noexcept;
+		void Append(const uint8_t* source, size_t length) noexcept;
 
 		/// <summary>Gets the current computed hash value without modifying accumulated state.</summary>
 		/// <returns>The hash value for the data already provided.</returns>
@@ -24,7 +24,7 @@ namespace cybex_interactive::jtf
 
 		/// <summary>Computes the CRC-32 hash of the provided data.</summary>
 		/// <returns>The CRC-32 hash of the provided data.</returns>
-		static uint32_t Hash(const void* data, size_t length) noexcept;
+		static uint32_t Hash(const uint8_t* data, size_t length) noexcept;
 
 		/// <summary>Resets the hash computation to the initial state.</summary>
 		constexpr void Reset() noexcept { m_value = 0xFFFFFFFFu; }

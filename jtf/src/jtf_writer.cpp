@@ -73,7 +73,7 @@ namespace cybex_interactive::jtf
 			throw std::invalid_argument(fileWriteError(filePath, "heights size mismatch with map size (width * height)."));
 
 		// file existance check
-		std::ofstream file(filePath, std::ios::binary);
+		std::ofstream file(filePath, std::ios::binary | std::ios::trunc);
 		if (!file)
 			throw std::runtime_error(fileWriteError(filePath, "Cannot open file for writing."));
 

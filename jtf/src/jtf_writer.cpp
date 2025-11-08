@@ -112,7 +112,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		const char chunkTypeName[4] = { 'H','E','A','D' };
+		constexpr char chunkTypeName[4] = { 'H','E','A','D' };
 		file.write(chunkTypeName, 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
@@ -166,7 +166,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		const char chunkTypeName[4] = { 'H','M','A','P' };
+		constexpr char chunkTypeName[4] = { 'H','M','A','P' };
 		file.write(chunkTypeName, 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
@@ -191,7 +191,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		const char chunkTypeName[4] = { 'F','E','N','D' };
+		constexpr char chunkTypeName[4] = { 'F','E','N','D' };
 		file.write(chunkTypeName, 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 

@@ -18,11 +18,12 @@ namespace cybex_interactive::jtf
 		return std::format("[JTF Write Error] '{}' {} => File could not be generated.\n", filePath, message);
 	}
 
-	inline static void AppendToCrc(const uint8_t* source, size_t length, std::initializer_list<Crc32> crcs)
+	inline static void AppendToCrc(const uint8_t* source, size_t length, std::initializer_list<Crc32*> crcs)
 	{
 		if (crcs.size() > 0)
-			for (auto crc : crcs)
-				crc.Append(source, length);
+			for (Crc32* crc : crcs)
+				if (crc)
+					crc->Append(source, length);
 	}
 
 	inline static void WriteInt32(std::ofstream& file, int32_t value) {
@@ -99,52 +100,52 @@ namespace cybex_interactive::jtf
 		// chunk length
 		const uint32_t payloadSize = 32;
 		WriteUInt32(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		const char chunkTypeName[4] = { 'H','E','A','D' };
 		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// version major
 		const uint8_t versionMajor = 1;
 		WriteUInt8(file, versionMajor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMajor), sizeof(versionMajor), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMajor), sizeof(versionMajor), { &chunkCrc, &fileCrc });
 		// version minor
 		const uint8_t versionMinor = 0;
 		WriteUInt8(file, versionMinor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { &chunkCrc, &fileCrc });
 
 		// dimensions
 		WriteUInt16(file, width);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&width), sizeof(width), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&width), sizeof(width), { &chunkCrc, &fileCrc });
 		WriteUInt16(file, height);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&height), sizeof(height), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&height), sizeof(height), { &chunkCrc, &fileCrc });
 
 		// bit depth
 		WriteUInt16(file, bitDepth);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&bitDepth), sizeof(bitDepth), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&bitDepth), sizeof(bitDepth), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
 		WriteUInt64(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { &chunkCrc, &fileCrc });
 
 		// bounds
 		WriteInt32(file, boundsLower);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsLower), sizeof(boundsLower), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsLower), sizeof(boundsLower), { &chunkCrc, &fileCrc });
 		WriteInt32(file, boundsUpper);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsUpper), sizeof(boundsUpper), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsUpper), sizeof(boundsUpper), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
 		WriteUInt64(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
 		WriteUInt32(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
 	}
 
 	template<typename T> void JTFFile::WriteHmapChunk(std::ofstream& file, uint16_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc)
@@ -153,24 +154,24 @@ namespace cybex_interactive::jtf
 		uint32_t sampleSize = bitDepth / 8;
 		uint32_t payloadSize = static_cast<uint32_t>(heights.size() * sampleSize); // size limit checked in JTFFile::Write
 		WriteUInt32(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		const char chunkTypeName[4] = { 'H','M','A','P' };
 		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// height data
 		const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
 		file.write(reinterpret_cast<const char*>(heightsData), payloadSize);
-		AppendToCrc(heightsData, payloadSize, { chunkCrc, fileCrc });
+		AppendToCrc(heightsData, payloadSize, { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
 		WriteUInt32(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
 	}
 
 	void JTFFile::WriteFendChunk(std::ofstream& file, Crc32& fileCrc)
@@ -178,19 +179,19 @@ namespace cybex_interactive::jtf
 		// chunk length
 		const uint32_t payloadSize = 0;
 		WriteUInt32(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		const char chunkTypeName[4] = { 'F','E','N','D' };
 		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { chunkCrc, fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = Crc32::Hash(reinterpret_cast<const uint8_t*>(chunkTypeName), 4);
 		WriteUInt32(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
 	}
 
 	void JTFFile::WriteFileCrc(std::ofstream& file, Crc32& fileCrc)

@@ -3,7 +3,6 @@
 // See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
 #include "jtf.h"
-#include <fstream>
 #include <vector>
 #include <cstring>
 #include <stdexcept>

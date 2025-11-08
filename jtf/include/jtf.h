@@ -8,6 +8,7 @@
 #include "jtf_types.h"
 #include "jtf_crc32.h"
 #include <string>
+#include <fstream>
 
 namespace cybex_interactive::jtf
 {

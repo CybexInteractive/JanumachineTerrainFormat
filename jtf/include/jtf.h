@@ -17,8 +17,8 @@ namespace cybex_interactive::jtf
 	public:
 		/// <summary>Write terrain data to .jtf file.</summary>
 		/// <param name="path">File path.</param>
-		/// <param name="width">Terrain width. Max value = 8193.</param>
-		/// <param name="height">Terrain height. Max value = 8193.</param>
+		/// <param name="width">Terrain width. Max value = 4097.</param>
+		/// <param name="height">Terrain height. Max value = 4097.</param>
 		/// <param name="boundsLower">Lowest Elevation floored to next lesser int32_t.</param>
 		/// <param name="boundsUpper">Highest Elevation ceiled to next greater int32_t.</param>
 		/// <param name="heights">Terrain heights stored in row-major order.</param>

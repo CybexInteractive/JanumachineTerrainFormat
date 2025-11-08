@@ -47,8 +47,13 @@ namespace cybex_interactive::jtf
 	}
 
 	
-	inline static void UInt64_BigEndian(uint64_t value, uint8_t* out) {
-		for (int i = 0; i < 8; ++i) out[7 - i] = static_cast<uint8_t>(value & 0xFF), value >>= 8;
+	inline static void UInt64_BigEndian(uint64_t value, uint8_t* out)
+	{
+		for (int i = 7; i >= 0; --i)
+		{
+			out[i] = static_cast<uint8_t>(value & 0xFF);
+			value >>= 8;
+		}
 	}
 
 

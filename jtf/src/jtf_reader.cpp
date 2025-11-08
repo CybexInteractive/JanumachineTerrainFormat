@@ -2,10 +2,9 @@
 // © 2025 Cybex Interactive & Matthias Simon Gut (aka Cybex)
 // See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
-#include "jtf.h"
 #include <format>
+#include "jtf.h"
 
-#include <iostream>
 
 namespace cybex_interactive::jtf
 {
@@ -16,8 +15,6 @@ namespace cybex_interactive::jtf
 
 	JTF JTFFile::Read(const std::string& filePath)
 	{
-		std::cout << std::format("Read from {}\n", filePath);
-		std::cout << fileReadError(filePath, "Just a test READ error");
 		return JTF();
 	}
 }

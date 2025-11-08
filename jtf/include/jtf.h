@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include <string>
+#include <fstream>
 #include "jtf_export.h"
 #include "jtf_types.h"
 #include "jtf_crc32.h"
-#include <string>
-#include <fstream>
 
 namespace cybex_interactive::jtf
 {

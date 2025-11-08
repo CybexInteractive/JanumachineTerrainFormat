@@ -3,12 +3,12 @@
 // See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
 #include "jtf.h"
+#include "jtf_utility.h"
 #include <vector>
 #include <cstring>
 #include <stdexcept>
 #include <format>
-
-#include <iostream>
+#include <bit>
 
 namespace cybex_interactive::jtf
 {
@@ -27,22 +27,32 @@ namespace cybex_interactive::jtf
 
 
 	inline static void WriteInt32_LittleEndian(std::ofstream& file, int32_t value) {
+		if constexpr (std::endian::native == std::endian::big)
+			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
 	inline static void WriteUInt8_LittleEndian(std::ofstream& file, uint8_t value) {
+		if constexpr (std::endian::native == std::endian::big)
+			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
 	inline static void WriteUInt16_LittleEndian(std::ofstream& file, uint16_t value) {
+		if constexpr (std::endian::native == std::endian::big)
+			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
 	inline static void WriteUInt32_LittleEndian(std::ofstream& file, uint32_t value){
+		if constexpr (std::endian::native == std::endian::big)
+			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 	
 	inline static void WriteUInt64_LittleEndian(std::ofstream& file, uint64_t value) {
+		if constexpr (std::endian::native == std::endian::big)
+			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 

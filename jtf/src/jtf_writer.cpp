@@ -19,10 +19,9 @@ namespace cybex_interactive::jtf
 
 	inline static void AppendToCrc(const uint8_t* source, size_t length, std::initializer_list<Crc32*> crcs)
 	{
-		if (crcs.size() > 0)
-			for (Crc32* crc : crcs)
-				if (crc)
-					crc->Append(source, length);
+		for (Crc32* crc : crcs)
+			if (crc)
+				crc->Append(source, length);
 	}
 
 	inline static void WriteInt32(std::ofstream& file, int32_t value) {

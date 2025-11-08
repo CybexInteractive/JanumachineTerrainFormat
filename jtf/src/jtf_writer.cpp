@@ -59,8 +59,6 @@ namespace cybex_interactive::jtf
 
 	template<typename T> void JTFFile::Write(const std::string& filePath, uint16_t width, uint16_t height, int32_t boundsLower, int32_t boundsUpper, const std::vector<T>& heights)
 	{
-		std::cout << std::format("Write to {} -> {}, {}, {}, {}, {}\n", filePath, width, height, boundsLower, boundsUpper, heights.size());
-
 		// type compatibility check
 		static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "JTF supports only float or double for T.");
 

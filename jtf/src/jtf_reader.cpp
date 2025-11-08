@@ -1,6 +1,6 @@
 // MIT License
 // © 2025 Cybex Interactive & Matthias Simon Gut (aka Cybex)
-// See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/refs/heads/develop/LICENSE.md).
+// See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
 #include "jtf.h"
 #include <format>

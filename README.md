@@ -37,6 +37,10 @@ Compact binary terrain heightmap format for 3D applications and game engines.
     <td>Big-endian</td>
   </tr>
   <tr>
+    <td>Chunk IDs (Typename)</td>
+    <td>Big-endian</td>
+  </tr>
+  <tr>
     <td>all integers</td>
     <td>Little-endian</td>
   </tr>

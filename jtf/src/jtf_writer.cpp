@@ -8,21 +8,12 @@
 #include <cstring>
 #include <stdexcept>
 #include <format>
-#include <bit>
 
 namespace cybex_interactive::jtf
 {
-	static std::string fileWriteError(const std::string& filePath, const std::string& message)
+	inline static std::string FileWriteError(const std::string& filePath, const std::string& message)
 	{
 		return std::format("[JTF Write Error] '{}' {} => File could not be generated.\n", filePath, message);
-	}
-
-
-	inline static void AppendToCrc(const uint8_t* source, size_t length, std::initializer_list<Crc32*> crcs)
-	{
-		for (Crc32* crc : crcs)
-			if (crc)
-				crc->Append(source, length);
 	}
 
 
@@ -56,7 +47,7 @@ namespace cybex_interactive::jtf
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
-	
+
 	inline static void UInt64_BigEndian(uint64_t value, uint8_t* out)
 	{
 		for (int i = 7; i >= 0; --i)
@@ -65,8 +56,7 @@ namespace cybex_interactive::jtf
 			value >>= 8;
 		}
 	}
-
-
+	
 	template<typename T> void JTFFile::Write(const std::string& filePath, uint16_t width, uint16_t height, int32_t boundsLower, int32_t boundsUpper, const std::vector<T>& heights)
 	{
 		// type compatibility check
@@ -74,22 +64,22 @@ namespace cybex_interactive::jtf
 
 		// size constraint check
 		if (width > MAP_AXIS_SIZE_LIMIT || height > MAP_AXIS_SIZE_LIMIT)
-			throw std::invalid_argument(fileWriteError(filePath, std::format("width {} and/or height {} exceeds limit of {}.", width, height, MAP_AXIS_SIZE_LIMIT)));
+			throw std::invalid_argument(FileWriteError(filePath, std::format("width {} and/or height {} exceeds limit of {}.", width, height, MAP_AXIS_SIZE_LIMIT)));
 
 		// heights to map size check
 		if (heights.size() != size_t(width) * size_t(height))
-			throw std::invalid_argument(fileWriteError(filePath, "heights size mismatch with map size (width * height)."));
+			throw std::invalid_argument(FileWriteError(filePath, "heights size mismatch with map size (width * height)."));
 
 		// file existance check
 		std::ofstream file(filePath, std::ios::binary | std::ios::trunc);
 		if (!file)
-			throw std::runtime_error(fileWriteError(filePath, "Cannot open file for writing."));
+			throw std::runtime_error(FileWriteError(filePath, "Cannot open file for writing."));
 
 		uint16_t bitDepth = std::is_same_v<T, float> ? 32 : 64;
 
 		// heights payload size limit check
 		if (heights.size() * (bitDepth / 8) > std::numeric_limits<uint32_t>::max())
-			throw std::overflow_error(fileWriteError(filePath, "Payload size exceeds 4 GB limit."));
+			throw std::overflow_error(FileWriteError(filePath, "Payload size exceeds 4 GB limit."));
 
 		Crc32 fileCrc;
 
@@ -120,9 +110,9 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr char chunkTypeName[4] = { 'H','E','A','D' };
-		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_HEAD;
+		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// version major
 		const uint8_t versionMajor = 1;
@@ -174,9 +164,9 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr char chunkTypeName[4] = { 'H','M','A','P' };
-		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_HMAP;
+		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// height data
 		const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
@@ -199,12 +189,12 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr char chunkTypeName[4] = { 'F','E','N','D' };
-		file.write(chunkTypeName, 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_FEND;
+		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// chunk crc
-		uint32_t crcValue = Crc32::Hash(reinterpret_cast<const uint8_t*>(chunkTypeName), 4);
+		uint32_t crcValue = Crc32::Hash(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4);
 		WriteUInt32_LittleEndian(file, crcValue);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
 	}

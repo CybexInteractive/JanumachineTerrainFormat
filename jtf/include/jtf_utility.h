@@ -50,4 +50,11 @@ namespace cybex_interactive::jtf
 			return value;
 		}
 	}
+
+	inline static void AppendToCrc(const uint8_t* source, size_t length, std::initializer_list<Crc32*> crcs)
+	{
+		for (Crc32* crc : crcs)
+			if (crc)
+				crc->Append(source, length);
+	}
 }

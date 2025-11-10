@@ -25,7 +25,4 @@ namespace cybex_interactive::jtf
 
 		std::vector<double> Heights;
 	};
-
-	constexpr uint64_t JTF_SIGNATURE = 0x8A4A54460D0A1B0A;
-	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 }

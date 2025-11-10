@@ -23,11 +23,15 @@
     <ClInclude Include="include\jtf_crc32.h" />
     <ClInclude Include="include\jtf_export.h" />
     <ClInclude Include="include\jtf_types.h" />
+    <ClInclude Include="include\jtf_utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\jtf_crc32.cpp" />
     <ClCompile Include="src\jtf_reader.cpp" />
     <ClCompile Include="src\jtf_writer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

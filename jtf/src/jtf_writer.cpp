@@ -6,7 +6,6 @@
 #include "jtf_utility.h"
 #include <vector>
 #include <cstring>
-#include <stdexcept>
 #include <format>
 
 namespace cybex_interactive::jtf

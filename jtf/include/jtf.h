@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "jtf_export.h"
 #include "jtf_types.h"
 #include "jtf_crc32.h"
 #include <string>
@@ -54,10 +53,10 @@ namespace cybex_interactive::jtf
 	}
 
 
-	class JTF_API JTFFile
+	class JTFFile
 	{
 	public:
-		/// <summary>Write terrain data to .jtf file.</summary>
+		/// <summary>Write to .jtf file.</summary>
 		/// <param name="path">File path.</param>
 		/// <param name="width">Terrain width. Max value = 4097.</param>
 		/// <param name="height">Terrain height. Max value = 4097.</param>

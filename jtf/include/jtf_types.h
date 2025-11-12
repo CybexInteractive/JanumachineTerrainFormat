@@ -5,7 +5,6 @@
 #pragma once
 
 #include <vector>
-#include <cstdint>
 
 namespace cybex_interactive::jtf
 {

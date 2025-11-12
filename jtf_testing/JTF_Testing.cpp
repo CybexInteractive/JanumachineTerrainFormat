@@ -71,7 +71,6 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 
 int main()
 {
-
 	cout << "Testing JTF C API" << endl;
 	cout << "----------------------------------------------------------------------------------------------------" << endl << endl;
 
@@ -87,14 +86,9 @@ int main()
 	string expectedReadError = "";
 
 
-	//RunWriteReadTest(filePath.c_str(), 4, 4, -50, 150, heights_float_positive, 
-	//	expectedWriteResult, expectedReadResult, testDescription, expectedWriteError, expectedReadError);
 
 	RunWriteReadTest(filePath.c_str(), 4, 8, -50, 150, heights_double_negative, 
 		expectedWriteResult, expectedReadResult, testDescription, expectedWriteError, expectedReadError);
-
-	//RunWriteReadTest(filePath.c_str(), 4, 8, -50, 150, heights_float_positive, 
-	//	expectedWriteResult, expectedReadResult, testDescription, expectedWriteError, expectedReadError);
 
 
 

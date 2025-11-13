@@ -33,10 +33,11 @@ extern "C"
 		return new JTF();
 	}
 
-	JTF_API void Destroy(JTF* file)
+	JTF_API void Destroy(JTF* data)
 	{
-		if (!file) return;
-		delete file;
+		if (!data) return;
+		delete[] data->HeightSamples;
+		delete data;
 	}
 
 	JTF_API JTF_Result Write(const char* filePath, uint16_t width, uint16_t height, int32_t boundsLower, int32_t boundsUpper, const double* heights, uint64_t sampleCount)

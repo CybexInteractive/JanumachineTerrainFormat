@@ -107,7 +107,7 @@ namespace cybex_interactive::jtf
 	void JTFFile::ReadHeadChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc, JTF& jtf)
 	{
 		if (payloadSize != 32)
-			throw std::runtime_error(FileReadError(filePath, std::format("Invalid HEAD payload size, expected 32 got {}.", payloadSize)));
+			throw std::runtime_error(FileReadError(filePath, std::format("Invalid HEAD payload size, expected [32] got [{}].", payloadSize)));
 
 		std::vector<uint8_t> payload(payloadSize);
 		ReadToBuffer(filePath, file, payload.data(), payloadSize);
@@ -194,13 +194,13 @@ namespace cybex_interactive::jtf
 			const double* src_d = reinterpret_cast<const double*>(payload.data());
 			std::memcpy(jtf.HeightSamples.data(), src_d, payloadSize);
 		}
-		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected 32 or 64 got {}.", jtf.BitDepth)));
+		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.BitDepth)));
 	}
 
 	void JTFFile::ReadFendChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc)
 	{
 		if (payloadSize != 0)
-			throw std::runtime_error(FileReadError(filePath, std::format("Invalid FEND payload size, expected 0 got {}.", payloadSize)));
+			throw std::runtime_error(FileReadError(filePath, std::format("Invalid FEND payload size, expected [0] got [{}].", payloadSize)));
 
 		Crc32 chunkCrc;
 

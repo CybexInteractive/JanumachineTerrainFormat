@@ -92,7 +92,6 @@ extern "C"
 		{
 			return JTF_EXCEPTION;
 		}
-
 	}
 
 	JTF_API const char* GetVersion(void)

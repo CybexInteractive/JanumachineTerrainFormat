@@ -71,7 +71,25 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 
 int main()
 {
-	cout << "Testing JTF C API" << endl;
+	cout << "Testing JTF" << endl << endl;
+
+	cout << "Choose procedure:\n1. Default\n2. Read file at path" << endl;
+
+	cout << "Awaiting input: ";
+
+	int choice;
+	cin >> choice;
+
+	// Move cursor up 1 line and clear it
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+
+	cout << "\r\rTesting JTF (" << (choice == 1 ? "Default" : "Read file at path") << ")" << endl;
+
 	cout << "----------------------------------------------------------------------------------------------------" << endl << endl;
 
 	string filePath = (filesystem::temp_directory_path() / "CppJTFTest.jtf").string();
@@ -92,9 +110,8 @@ int main()
 
 
 
-
 	testDescription =
-		"Heights size mismatch. Width 4 Height 8, Heights size 16.";
+		"HeightSamples size mismatch. Width 4 Height 8, HeightSamples size 16.";
 	expectedWriteError =
 		format(R"([JTF Write Error] '{}' heights size mismatch with map size (width * height). => File could not be generated.)", filePath);
 	expectedReadError =

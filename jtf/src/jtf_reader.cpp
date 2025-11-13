@@ -181,18 +181,18 @@ namespace cybex_interactive::jtf
 			throw std::runtime_error(FileReadError(filePath, "HMAP CRC mismatch."));
 
 		size_t sampleCount = payloadSize / (jtf.BitDepth / 8);
-		jtf.Heights.resize(sampleCount);
+		jtf.HeightSamples.resize(sampleCount);
 
 		if (jtf.BitDepth == 32)
 		{
 			const float* src_f = reinterpret_cast<const float*>(payload.data());
 			for (size_t i = 0; i < sampleCount; ++i)
-				jtf.Heights[i] = static_cast<double>(src_f[i]);
+				jtf.HeightSamples[i] = static_cast<double>(src_f[i]);
 		}
 		else if (jtf.BitDepth == 64)
 		{
 			const double* src_d = reinterpret_cast<const double*>(payload.data());
-			std::memcpy(jtf.Heights.data(), src_d, payloadSize);
+			std::memcpy(jtf.HeightSamples.data(), src_d, payloadSize);
 		}
 		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected 32 or 64 got {}.", jtf.BitDepth)));
 	}

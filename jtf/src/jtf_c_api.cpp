@@ -11,7 +11,19 @@
 
 struct JTF
 {
-	cybex_interactive::jtf::JTF data;
+	uint8_t VersionMajor = 0;
+	uint8_t VersionMinor = 0;
+
+	uint16_t Width = 0;
+	uint16_t Height = 0;
+
+	uint16_t BitDepth = 0;
+
+	int32_t BoundsLower = 0;
+	int32_t BoundsUpper = 0;
+
+	double* HeightSamples;
+	uint32_t HeightSampleCount;
 };
 
 extern "C"
@@ -23,6 +35,7 @@ extern "C"
 
 	JTF_API void Destroy(JTF* file)
 	{
+		if (!file) return;
 		delete file;
 	}
 
@@ -42,15 +55,36 @@ extern "C"
 		}
 	}
 
-	JTF_API JTF_Result Read(const char* filePath, JTF** out_file)
+	JTF_API JTF_Result Read(const char* filePath, JTF** out_data)
 	{
-		if (!filePath || !out_file) return JTF_INVALID_ARGUMENT;
+		if (!filePath || !out_data) return JTF_INVALID_ARGUMENT;
 
 		try
 		{
-			std::unique_ptr<JTF> file(new JTF());
-			file->data = cybex_interactive::jtf::JTFFile::Read(filePath);
-			*out_file = file.release();
+			std::unique_ptr<JTF> data(new JTF());
+
+			cybex_interactive::jtf::JTF jtf = cybex_interactive::jtf::JTFFile::Read(filePath);
+
+			data->VersionMajor = jtf.VersionMajor;
+			data->VersionMinor = jtf.VersionMinor;
+			data->Width = jtf.Width;
+			data->Height = jtf.Height;
+			data->BitDepth = jtf.BitDepth;
+			data->BoundsLower = jtf.BoundsLower;
+			data->BoundsUpper = jtf.BoundsUpper;
+
+			uint32_t heightSampleCount = static_cast<uint32_t>(jtf.HeightSamples.size());
+			data->HeightSampleCount = heightSampleCount;
+
+			if (heightSampleCount > 0)
+			{
+				data->HeightSamples = new double[heightSampleCount];
+				memcpy(data->HeightSamples, jtf.HeightSamples.data(), heightSampleCount * sizeof(double));
+			}
+			else data->HeightSamples = nullptr;
+
+			*out_data = data.release();
+			
 			return JTF_SUCCESS;
 		}
 		catch (...)

@@ -22,6 +22,6 @@ namespace cybex_interactive::jtf
 		int32_t BoundsUpper = 0;
 		int32_t BoundsRange() const { return BoundsUpper - BoundsLower; }
 
-		std::vector<double> Heights;
+		std::vector<double> HeightSamples;
 	};
 }

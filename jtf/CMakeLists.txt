@@ -3,6 +3,7 @@
 # create shared library target 'jtf'
 add_library(jtf SHARED)
 
+# versioning
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/jtf_version.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/include/jtf_version.h
@@ -36,4 +37,22 @@ set_target_properties(jtf PROPERTIES
 # On other platforms, it can be empty or use visibility attributes
 target_compile_definitions(jtf
     PRIVATE JTF_EXPORTS
+)
+
+# file metadata
+# windows
+if(WIN32)
+	configure_file(
+		${CMAKE_CURRENT_SOURCE_DIR}/resource/jtf_version.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/resource/jtf_version.rc
+        @ONLY
+	)
+	target_sources(jtf PRIVATE 
+		${CMAKE_CURRENT_BINARY_DIR}/resource/jtf_version.rc
+	)
+endif()
+# macOS / Linux
+set_target_properties(jtf PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
 )

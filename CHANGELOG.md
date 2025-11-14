@@ -38,16 +38,6 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
   - DLL/SO/DYLIB version metadata
 - Very basic **unit test** for native functionality.
 
-**Fixed**
-
-**Changed**
-
-**Deprecated**
-
-**Removed**
-
-**Security**
-
 ## ⌛ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025
 First working prototype.
 

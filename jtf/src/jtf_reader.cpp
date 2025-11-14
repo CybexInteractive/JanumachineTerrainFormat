@@ -10,7 +10,7 @@ namespace cybex_interactive::jtf
 {
 	inline static std::string FileReadError(const std::string& filePath, const std::string& message)
 	{
-		return std::format("[JTF Import Error] '{}' {} => File corrupted or not saved correctly.\n", filePath, message);
+		return std::format("[JTF Import Error] '{}' {} File corrupted or not saved correctly.\n", filePath, message);
 	}
 
 

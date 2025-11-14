@@ -12,7 +12,7 @@ namespace cybex_interactive::jtf
 {
 	inline static std::string FileWriteError(const std::string& filePath, const std::string& message)
 	{
-		return std::format("[JTF Write Error] '{}' {} => File could not be generated.\n", filePath, message);
+		return std::format("[JTF Write Error] '{}' {} File could not be generated.\n", filePath, message);
 	}
 
 

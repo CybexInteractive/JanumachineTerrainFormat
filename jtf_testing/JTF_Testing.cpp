@@ -23,11 +23,15 @@ static string PrintResult(JTF_Result result)
 		return "Success";
 	case JTF_INVALID_ARGUMENT:
 		return "Invalid Argument";
-	case JTF_IO_ERROR:
-		return "IO Error";
-	case JTF_EXCEPTION: 
+	case JTF_FILE_NOT_FOUND:
+		return "File not found";
+	case JTF_CRC_MISMATCH:
+		return "CRC mismatch";
+	case JTF_UNSUPPORTED_FORMAT:
+		return "Unsupported format";
+	case JTF_EXCEPTION:
 		return "Exception";
-	default: 
+	default:
 		return "Unknown Result";
 	}
 }
@@ -53,14 +57,14 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 	}
 
 	// write test
-	JTF_Result writeResult = Write(filePath, width, height, boundsLower, boundsUpper, heights.data(), heights.size());
-	cout << format("Write result:\t\t {} {}", ResultCompare(expectedWriteResult, writeResult), PrintResult(writeResult)) << endl;
+	JTF_Log writeResult = Write(filePath, width, height, boundsLower, boundsUpper, heights.data(), heights.size());
+	cout << format("Write result:\t\t {} {}", ResultCompare(expectedWriteResult, writeResult.result), PrintResult(writeResult.result)) << endl;
 	file = nullptr;
 	Destroy(file);
 
 	// read test
-	JTF_Result readResult = Read(filePath, &file);
-	cout << format("Read result:\t\t {} {}", ResultCompare(expectedReadResult, readResult), PrintResult(readResult)) << endl;
+	JTF_Log readResult = Read(filePath, &file);
+	cout << format("Read result:\t\t {} {}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result)) << endl;
 	file = nullptr;
 	Destroy(file);
 

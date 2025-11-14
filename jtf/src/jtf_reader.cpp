@@ -135,6 +135,8 @@ namespace cybex_interactive::jtf
 		jtf.VersionMajor = payload[offset++];
 		// version minor
 		jtf.VersionMinor = payload[offset++];
+		// version patch
+		jtf.VersionPatch = payload[offset++];
 
 		// dimensions
 		std::memcpy(&jtf.Width, payload.data() + offset, sizeof(uint16_t));
@@ -143,8 +145,7 @@ namespace cybex_interactive::jtf
 		offset += 2;
 
 		// bit depth
-		std::memcpy(&jtf.BitDepth, payload.data() + offset, sizeof(uint16_t));
-		offset += 2;
+		jtf.BitDepth = payload[offset++];
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
 		offset += 8;

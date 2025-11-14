@@ -13,6 +13,7 @@ extern "C" {
 
 	#define JTF_VERSION_MAJOR cybex_interactive::jtf::VERSION_MAJOR
 	#define JTF_VERSION_MINOR cybex_interactive::jtf::VERSION_MINOR
+	#define JTF_VERSION_PATCH cybex_interactive::jtf::VERSION_PATCH
 
 	#define JTF_LOG_MESSAGE_LIMIT 256
 

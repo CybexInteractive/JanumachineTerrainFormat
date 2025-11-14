@@ -76,7 +76,7 @@ namespace cybex_interactive::jtf
 		if (!file)
 			throw std::runtime_error(FileWriteError(filePath, "Cannot open file for writing."));
 
-		uint16_t bitDepth = std::is_same_v<T, float> ? 32 : 64;
+		uint8_t bitDepth = std::is_same_v<T, float> ? 32 : 64;
 
 		// heights payload size limit check
 		if (heights.size() * (bitDepth / 8) > std::numeric_limits<uint32_t>::max())
@@ -99,7 +99,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(signatureBE, sizeof(signatureBE), { &fileCrc });
 	}
 
-	void JTFFile::WriteHeadChunk(std::ofstream& file, uint16_t width, uint16_t height, uint16_t bitDepth, int32_t boundsLower, int32_t boundsUpper, Crc32& fileCrc)
+	void JTFFile::WriteHeadChunk(std::ofstream& file, uint16_t width, uint16_t height, uint8_t bitDepth, int32_t boundsLower, int32_t boundsUpper, Crc32& fileCrc)
 	{
 		uint64_t zero64bit = 0;
 
@@ -116,13 +116,17 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// version major
-		const uint8_t versionMajor = 1;
+		const uint8_t versionMajor = VERSION_MAJOR;
 		WriteUInt8_LittleEndian(file, versionMajor);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMajor), sizeof(versionMajor), { &chunkCrc, &fileCrc });
 		// version minor
-		const uint8_t versionMinor = 0;
+		const uint8_t versionMinor = VERSION_MINOR;
 		WriteUInt8_LittleEndian(file, versionMinor);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { &chunkCrc, &fileCrc });
+		// version patch
+		const uint8_t versionPatch = VERSION_PATCH;
+		WriteUInt8_LittleEndian(file, versionMinor);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionPatch), sizeof(versionPatch), { &chunkCrc, &fileCrc });
 
 		// dimensions
 		WriteUInt16_LittleEndian(file, width);
@@ -131,7 +135,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&height), sizeof(height), { &chunkCrc, &fileCrc });
 
 		// bit depth
-		WriteUInt16_LittleEndian(file, bitDepth);
+		WriteUInt8_LittleEndian(file, bitDepth);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&bitDepth), sizeof(bitDepth), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
@@ -154,7 +158,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
 	}
 
-	template<typename T> void JTFFile::WriteHmapChunk(std::ofstream& file, uint16_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc)
+	template<typename T> void JTFFile::WriteHmapChunk(std::ofstream& file, uint8_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc)
 	{
 		// chunk length
 		uint32_t sampleSize = bitDepth / 8;

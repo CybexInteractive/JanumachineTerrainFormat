@@ -115,7 +115,7 @@ extern "C"
 
 	JTF_API const char* GetVersion(void)
 	{
-		static thread_local std::string buffer = std::format("JTF v{}.{}", JTF_VERSION_MAJOR, JTF_VERSION_MINOR);
+		static thread_local std::string buffer = std::format("v{}.{}.{}", JTF_VERSION_MAJOR, JTF_VERSION_MINOR, JTF_VERSION_PATCH);
 		return buffer.c_str();
 	}
 }

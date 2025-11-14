@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "jtf_version.h"
 #include "jtf_types.h"
 #include "jtf_crc32.h"
 #include <string>
@@ -13,10 +14,6 @@
 namespace cybex_interactive::jtf
 {
 	constexpr uint64_t JTF_SIGNATURE = 0x8A4A54460D0A1B0A;
-
-	inline constexpr uint8_t VERSION_MAJOR = 1;
-	inline constexpr uint8_t VERSION_MINOR = 0;
-	inline constexpr uint8_t VERSION_PATCH = 0;
 
 	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 

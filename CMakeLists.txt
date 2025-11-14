@@ -1,12 +1,12 @@
 ﻿# JanumachineTerrainFormat/CMakeList.txt
 
-cmake_minimum_required (VERSION 3.20)
+cmake_minimum_required (VERSION 3.21)
 
 project (
 	JanumachineTerrainFormat
-	VERSION 1.0
+	VERSION 1.0.0
 	DESCRIPTION "Janumachine Terrain Format Library"
-	LANGUAGES CXX
+	LANGUAGES C CXX
 )
 
 # use C++20

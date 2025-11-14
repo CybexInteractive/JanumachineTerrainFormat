@@ -4,16 +4,15 @@
 
 #pragma once
 
+#include "jtf.h"
+#include "jtf_types.h"
+#include "jtf_version.h"
 #include "jtf_export.h"
 #include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
-	#define JTF_VERSION_MAJOR cybex_interactive::jtf::VERSION_MAJOR
-	#define JTF_VERSION_MINOR cybex_interactive::jtf::VERSION_MINOR
-	#define JTF_VERSION_PATCH cybex_interactive::jtf::VERSION_PATCH
 
 	#define JTF_LOG_MESSAGE_LIMIT 256
 

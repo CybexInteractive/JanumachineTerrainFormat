@@ -116,15 +116,15 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// version major
-		const uint8_t versionMajor = VERSION_MAJOR;
+		const uint8_t versionMajor = JTF_VERSION_MAJOR;
 		WriteUInt8_LittleEndian(file, versionMajor);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMajor), sizeof(versionMajor), { &chunkCrc, &fileCrc });
 		// version minor
-		const uint8_t versionMinor = VERSION_MINOR;
+		const uint8_t versionMinor = JTF_VERSION_MINOR;
 		WriteUInt8_LittleEndian(file, versionMinor);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { &chunkCrc, &fileCrc });
 		// version patch
-		const uint8_t versionPatch = VERSION_PATCH;
+		const uint8_t versionPatch = JTF_VERSION_PATCH;
 		WriteUInt8_LittleEndian(file, versionMinor);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionPatch), sizeof(versionPatch), { &chunkCrc, &fileCrc });
 

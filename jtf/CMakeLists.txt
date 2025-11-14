@@ -3,10 +3,16 @@
 # create shared library target 'jtf'
 add_library(jtf SHARED)
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/jtf_version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/jtf_version.h
+    @ONLY
+)
+
 # include directories
-target_include_directories(jtf
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+target_include_directories(jtf PUBLIC
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 # source files
@@ -16,7 +22,7 @@ target_sources(jtf
         src/jtf_reader.cpp
         src/jtf_writer.cpp
 		src/jtf_c_api.cpp
-)
+		include/jtf_version.h)
 
 # C++ standard
 set_target_properties(jtf PROPERTIES

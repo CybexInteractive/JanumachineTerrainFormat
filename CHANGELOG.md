@@ -59,7 +59,7 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
 - Unified version definition location (`jtf_version.h.in` → generated header).
 - Cleaned up include structure and removed redundant declarations.
 
-## ⌛ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025 (Internal Unreleased Prototype)
+## 🗄️ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025 (Internal Unreleased Prototype)
 First working prototype.
 
 **Added**

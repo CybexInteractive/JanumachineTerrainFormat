@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "jtf_export.h"
 #include "jtf_types.h"
 #include "jtf_crc32.h"
 #include <string>
@@ -14,6 +13,10 @@
 namespace cybex_interactive::jtf
 {
 	constexpr uint64_t JTF_SIGNATURE = 0x8A4A54460D0A1B0A;
+
+	inline constexpr uint8_t VERSION_MAJOR = 1;
+	inline constexpr uint8_t VERSION_MINOR = 0;
+
 	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 
 	// ensure chunk IDs are built big-endian
@@ -54,10 +57,10 @@ namespace cybex_interactive::jtf
 	}
 
 
-	class JTF_API JTFFile
+	class JTFFile
 	{
 	public:
-		/// <summary>Write terrain data to .jtf file.</summary>
+		/// <summary>Write to .jtf file.</summary>
 		/// <param name="path">File path.</param>
 		/// <param name="width">Terrain width. Max value = 4097.</param>
 		/// <param name="height">Terrain height. Max value = 4097.</param>

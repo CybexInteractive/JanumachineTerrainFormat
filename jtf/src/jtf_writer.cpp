@@ -6,14 +6,13 @@
 #include "jtf_utility.h"
 #include <vector>
 #include <cstring>
-#include <stdexcept>
 #include <format>
 
 namespace cybex_interactive::jtf
 {
 	inline static std::string FileWriteError(const std::string& filePath, const std::string& message)
 	{
-		return std::format("[JTF Write Error] '{}' {} => File could not be generated.\n", filePath, message);
+		return std::format("[JTF Write Error] '{}' {} File could not be generated.\n", filePath, message);
 	}
 
 
@@ -64,7 +63,9 @@ namespace cybex_interactive::jtf
 
 		// size constraint check
 		if (width > MAP_AXIS_SIZE_LIMIT || height > MAP_AXIS_SIZE_LIMIT)
-			throw std::invalid_argument(FileWriteError(filePath, std::format("width {} and/or height {} exceeds limit of {}.", width, height, MAP_AXIS_SIZE_LIMIT)));
+			throw std::invalid_argument(FileWriteError(filePath, std::format("width [{}] and/or height [{}] exceeds limit of [{}].", width, height, MAP_AXIS_SIZE_LIMIT)));
+		if (width == 0 || height == 0)
+			throw std::invalid_argument(FileWriteError(filePath, std::format("width [{}] and/or height [{}] subceeds limit of 1.", width, height)));
 
 		// heights to map size check
 		if (heights.size() != size_t(width) * size_t(height))

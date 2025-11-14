@@ -11,7 +11,7 @@ Work in progress
 **Removed**  
 **Security**  
 
-## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 14-11-2025
+## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.
 
 **Added**

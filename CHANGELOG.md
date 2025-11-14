@@ -14,7 +14,7 @@ Work in progress
 ## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 14-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.
 
-**Implemented**
+**Added**
 - **C++ core library** with reading/writing support.
 - **C API** `jtf_c_api.h` exposing:
   - `Create()`
@@ -22,10 +22,11 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
   - `Write()`
   - `GetVersion()`
   - `Destroy()`
-  - Return value `Log`, status reporting structure.
-
-**Added**
-- **Logging system** with consistent error codes.
+  - Return value `JTF_Log`, status reporting structure.
+- **New `JTF_Log` system** providing:
+  - `success` flag  
+  - human-readable error message (stack-allocated, no ownership transfer)  
+  - consistent error handling across read/write operations  
 - **File header format** including:
   - Signature (magic number)
   - Version (major, minor, patch)
@@ -36,13 +37,35 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
   - `PROJECT_VERSION`
   - auto-generated `jtf_version.h`
   - DLL/SO/DYLIB version metadata
+- **Binary compatibility guarantees**:
+  - fixed-size header  
+  - defined endianness  
+  - stable magic number  
+  - clearly versioned layout
 - Very basic **unit test** for native functionality.
 
-## ⌛ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025
+**Fixed**
+- Corrected handling of height buffer sizes.
+- Fixed rare case where file reads could overrun if metadata was malformed.
+
+**Changed**
+- Refactored `sampleCount` from `uint64_t` to `uint32_t` (max 4097 × 4097 fits safely).
+- Simplified the internal `JTF` struct (no `std::vector<double>` in the C interface).
+- Updated serialization code for:
+  - correct ordering of metadata  
+  - deterministic header layout  
+  - stable cross-platform binary representation
+- Reworked error propagation (exceptions in C++ → structured logs in C).
+- Unified version definition location (`jtf_version.h.in` → generated header).
+- Cleaned up include structure and removed redundant declarations.
+
+## ⌛ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025 (Internal Unreleased Prototype)
 First working prototype.
 
 **Added**
-- Basic file structure and serializer/deserializer.
+- First working prototype of file format and serializer/deserializer.
+- Basic read/write functionality without structured logging or version metadata.
+- Early C API draft for Unity interop testing.
 
 <br>
 
@@ -52,11 +75,9 @@ First working prototype.
 ## 🚧 Unreleased
 SUBTITLE
 
-**Implemented**
+**Added**
 - Foo
 - Bar
-
-**Added**
 
 **Fixed**
 

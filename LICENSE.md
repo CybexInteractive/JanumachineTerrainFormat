@@ -2,7 +2,7 @@
 This repository contains:  
 1. Reference Libraries / Code (.dll, scripts, etc.)  
 2. JTF Specification / Documentation  
-<br>
+
 ## 1) Reference Libraries / Code
 **MIT License**
 

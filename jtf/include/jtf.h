@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "jtf_export.h"
+#include "jtf_version.h"
 #include "jtf_types.h"
 #include "jtf_crc32.h"
 #include <string>
@@ -14,6 +14,7 @@
 namespace cybex_interactive::jtf
 {
 	constexpr uint64_t JTF_SIGNATURE = 0x8A4A54460D0A1B0A;
+
 	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 
 	// ensure chunk IDs are built big-endian
@@ -54,10 +55,10 @@ namespace cybex_interactive::jtf
 	}
 
 
-	class JTF_API JTFFile
+	class JTFFile
 	{
 	public:
-		/// <summary>Write terrain data to .jtf file.</summary>
+		/// <summary>Write to .jtf file.</summary>
 		/// <param name="path">File path.</param>
 		/// <param name="width">Terrain width. Max value = 4097.</param>
 		/// <param name="height">Terrain height. Max value = 4097.</param>
@@ -85,13 +86,13 @@ namespace cybex_interactive::jtf
 		/// <param name="boundsLower">Lowest Elevation floored to next lesser int32_t.</param>
 		/// <param name="boundsUpper">Highest Elevation ceiled to next greater int32_t.</param>
 		/// <param name="fileCrc">Computing file CRC reference.</param>
-		inline static void WriteHeadChunk(std::ofstream& file, uint16_t width, uint16_t height, uint16_t bitDepth, int32_t boundsLower, int32_t boundsUpper, Crc32& fileCrc);
+		inline static void WriteHeadChunk(std::ofstream& file, uint16_t width, uint16_t height, uint8_t bitDepth, int32_t boundsLower, int32_t boundsUpper, Crc32& fileCrc);
 
 		/// <summary>Write the height map chunk 'HMAP'.</summary>
 		/// <param name="file">File</param>
 		/// <param name="heights">Heights, normalized with bounds as extents.</param>
 		/// <param name="fileCrc">Computing file CRC reference.</param>
-		template<typename T> inline static void WriteHmapChunk(std::ofstream& file, uint16_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc);
+		template<typename T> inline static void WriteHmapChunk(std::ofstream& file, uint8_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc);
 
 		/// <summary>Write the file end chunk 'FEND'.</summary>
 		/// <param name="file">File</param>

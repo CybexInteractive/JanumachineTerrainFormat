@@ -1,0 +1,24 @@
+#include <winres.h>
+
+VS_VERSION_INFO VERSIONINFO
+	FILEVERSION @PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@, 0
+	PRODUCTVERSION @PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@, 0
+	BEGIN
+		BLOCK "StringFileInfo"
+		BEGIN
+			BLOCK "040904b0"
+			BEGIN
+				VALUE "CompanyName", "Cybex Interactive\0"
+				VALUE "FileDescription", "JTF Native Library\0"
+				VALUE "FileVersion", "@PROJECT_VERSION@\0"
+				VALUE "ProductName", "Janumachine Terrain Format\0"
+				VALUE "ProductVersion", "@PROJECT_VERSION@\0"
+				VALUE "LegalCopyright", "© 2025 Cybex Interactive\0"
+			END
+		END
+
+		BLOCK "VarFileInfo"
+		BEGIN
+			VALUE "Translation", 0x0409, 1200
+		END
+	END

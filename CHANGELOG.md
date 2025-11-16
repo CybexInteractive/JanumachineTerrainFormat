@@ -2,26 +2,70 @@
 All notable changes to this project will be dosumented in this file.
 
 ## 🚧 Unreleased
-### <span style="font-size: 16px;">Added</span>
-### <span style="font-size: 16px;">Fixed</span>
-### <span style="font-size: 16px;">Changed</span>
-### <span style="font-size: 16px;">Deprecated</span>
-### <span style="font-size: 16px;">Removed</span>
-### <span style="font-size: 16px;">Security</span>
+Work in progress
 
-## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 14-11-2025
+**Added**  
+**Fixed**  
+**Changed**  
+**Deprecated**  
+**Removed**  
+**Security**  
 
-### <span style="font-size: 16px;">Added</span>
-### <span style="font-size: 16px;">Fixed</span>
-### <span style="font-size: 16px;">Changed</span>
-### <span style="font-size: 16px;">Deprecated</span>
-### <span style="font-size: 16px;">Removed</span>
-### <span style="font-size: 16px;">Security</span>
+## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
+Initial stable release of **JTF ─ Janumachine Terrain Format**.
 
-## ⌛ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025
-<span style="font-size: 16px;">First working prototype.</span><br>
-### <span style="font-size: 16px;">Added</span>
-- Basic file structure and serializer/deserializer.
+**Added**
+- **C++ core library** with reading/writing support.
+- **C API** `jtf_c_api.h` exposing:
+  - `Create()`
+  - `Read()`
+  - `Write()`
+  - `GetVersion()`
+  - `Destroy()`
+  - Return value `JTF_Log`, status reporting structure.
+- **New `JTF_Log` system** providing:
+  - `success` flag  
+  - human-readable error message (stack-allocated, no ownership transfer)  
+  - consistent error handling across read/write operations  
+- **File header format** including:
+  - Signature (magic number)
+  - Version (major, minor, patch)
+  - Dimensions (width, height)
+  - Bit depth (sample precision)
+  - Bounds (lower, upper)
+- **Versioning system** integrated with CMake:
+  - `PROJECT_VERSION`
+  - auto-generated `jtf_version.h`
+  - DLL/SO/DYLIB version metadata
+- **Binary compatibility guarantees**:
+  - fixed-size header  
+  - defined endianness  
+  - stable magic number  
+  - clearly versioned layout
+- Very basic **unit test** for native functionality.
+
+**Fixed**
+- Corrected handling of height buffer sizes.
+- Fixed rare case where file reads could overrun if metadata was malformed.
+
+**Changed**
+- Refactored `sampleCount` from `uint64_t` to `uint32_t` (max 4097 × 4097 fits safely).
+- Simplified the internal `JTF` struct (no `std::vector<double>` in the C interface).
+- Updated serialization code for:
+  - correct ordering of metadata  
+  - deterministic header layout  
+  - stable cross-platform binary representation
+- Reworked error propagation (exceptions in C++ → structured logs in C).
+- Unified version definition location (`jtf_version.h.in` → generated header).
+- Cleaned up include structure and removed redundant declarations.
+
+## 🗄️ [JTF 0.1.0](https://youtu.be/dQw4w9WgXcQ?si=pqGzY85-3mrTXyxb&t=43) ─ 04-11-2025 (Internal Unreleased Prototype)
+First working prototype.
+
+**Added**
+- First working prototype of file format and serializer/deserializer.
+- Basic read/write functionality without structured logging or version metadata.
+- Early C API draft for Unity interop testing.
 
 <br>
 
@@ -29,11 +73,19 @@ All notable changes to this project will be dosumented in this file.
 
 <!--
 ## 🚧 Unreleased
-<span style="font-size: 16px;">___SUBTITLE___</span><br>
-### <span style="font-size: 16px;">Added</span>
-### <span style="font-size: 16px;">Fixed</span>
-### <span style="font-size: 16px;">Changed</span>
-### <span style="font-size: 16px;">Deprecated</span>
-### <span style="font-size: 16px;">Removed</span>
-### <span style="font-size: 16px;">Security</span>
+SUBTITLE
+
+**Added**
+- Foo
+- Bar
+
+**Fixed**
+
+**Changed**
+
+**Deprecated**
+
+**Removed**
+
+**Security**
 -->

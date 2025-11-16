@@ -4,6 +4,8 @@
 
 #include "jtf.h"
 #include "jtf_utility.h"
+#include <cstring>
+#include <cstdint>
 #include <format>
 
 namespace cybex_interactive::jtf

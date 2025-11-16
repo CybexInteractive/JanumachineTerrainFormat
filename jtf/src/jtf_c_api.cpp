@@ -3,8 +3,6 @@
 // See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
 #include "jtf_c_api.h"
-#include "jtf_types.h"
-#include "jtf.h"
 #include <memory>
 #include <string>
 #include <format>
@@ -115,7 +113,7 @@ extern "C"
 
 	JTF_API const char* GetVersion(void)
 	{
-		static thread_local std::string buffer = std::format("JTF v{}.{}", JTF_VERSION_MAJOR, JTF_VERSION_MINOR);
+		static thread_local std::string buffer = std::format("v{}.{}.{}", JTF_VERSION_MAJOR, JTF_VERSION_MINOR, JTF_VERSION_PATCH);
 		return buffer.c_str();
 	}
 }

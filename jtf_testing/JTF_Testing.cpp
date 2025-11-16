@@ -75,7 +75,7 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 
 int main()
 {
-	cout << "Testing JTF" << endl << endl;
+	cout << "Testing JTF " << GetVersion() << endl << endl;
 
 	cout << "Choose procedure:\n1. Default\n2. Read file at path" << endl;
 
@@ -91,8 +91,10 @@ int main()
 	cout << "\033[1A\033[2K";
 	cout << "\033[1A\033[2K";
 	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
+	cout << "\033[1A\033[2K";
 
-	cout << "\r\rTesting JTF (" << (choice == 1 ? "Default" : "Read file at path") << ")" << endl;
+	cout << "Testing JTF " << GetVersion() << " (" << (choice == 1 ? "Default" : "Read file at path") << ")" << endl;
 
 	cout << "----------------------------------------------------------------------------------------------------" << endl << endl;
 

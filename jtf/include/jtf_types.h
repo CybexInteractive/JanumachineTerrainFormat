@@ -12,11 +12,12 @@ namespace cybex_interactive::jtf
 	{
 		uint8_t VersionMajor = 0;
 		uint8_t VersionMinor = 0;
+		uint8_t VersionPatch = 0;
 
 		uint16_t Width = 0;
 		uint16_t Height = 0;
 
-		uint16_t BitDepth = 0;
+		uint8_t BitDepth = 0;
 
 		int32_t BoundsLower = 0;
 		int32_t BoundsUpper = 0;

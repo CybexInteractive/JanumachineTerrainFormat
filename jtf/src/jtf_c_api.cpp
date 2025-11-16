@@ -1,11 +1,13 @@
-// MIT License
-// � 2025 Cybex Interactive & Matthias Simon Gut (aka Cybex)
+﻿// MIT License
+// © 2025 Cybex Interactive & Matthias Simon Gut (aka Cybex)
 // See LICENSE.md for full license text (https://raw.githubusercontent.com/CybexInteractive/JanumachineTerrainFormat/main/LICENSE.md).
 
 #include "jtf_c_api.h"
 #include <memory>
 #include <string>
 #include <format>
+#include <cstring>
+#include <cstdio>
 
 struct JTF
 {
@@ -28,7 +30,8 @@ static inline JTF_Log BuildLog(JTF_Result result, const char* message)
 {
 	JTF_Log log{};
 	log.result = result;
-	strncpy_s(log.message, message ? message : "", JTF_LOG_MESSAGE_LIMIT);
+	//strncpy_s(log.message, message ? message : "", JTF_LOG_MESSAGE_LIMIT); // MSVC‐only (Windows)
+	snprintf(log.message, JTF_LOG_MESSAGE_LIMIT, "%s", message ? message : ""); // all platforms
 	return log;
 }
 

@@ -32,11 +32,29 @@ set_target_properties(jtf PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-# Define export macro for shared library
-# On Windows, JTF_EXPORT will resolve to __declspec(dllexport)
-# On other platforms, it can be empty or use visibility attributes
-target_compile_definitions(jtf
-    PRIVATE JTF_EXPORTS
+# define export macro for shared library
+# on Windows, JTF_EXPORT will resolve to __declspec(dllexport)
+# on other platforms, it can be empty or use visibility attributes
+target_compile_definitions(jtf PRIVATE
+	JTF_EXPORTS
+)
+
+# set consistent output names
+set_target_properties(jtf PROPERTIES
+	OUTPUT_NAME "jtf"
+	PREFIX "lib"
+)
+if(WIN32)
+	set_target_properties(jtf PROPERTIES
+		PREFIX ""
+	)
+endif()
+
+# version defines
+target_compile_definitions(jtf PRIVATE
+	JTF_VERSION_MAJOR=${JTF_VERSION_MAJOR}
+    JTF_VERSION_MINOR=${JTF_VERSION_MINOR}
+    JTF_VERSION_PATCH=${JTF_VERSION_PATCH}
 )
 
 # file metadata

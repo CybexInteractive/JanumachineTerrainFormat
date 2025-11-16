@@ -1,0 +1,195 @@
+name: Build and Release JTF Libraries
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  DLL_TARGET: jtf
+  ARCH: x64
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup CMake
+        uses: lukka/get-cmake@v3
+
+      - name: Configure (CMake)
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+        shell: bash
+
+      - name: Build
+        run: cmake --build build --config Release
+        shell: bash
+
+      - name: Package binary + license + attribution
+        id: package
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          # map runner.os -> platform token
+          case "${RUNNER_OS}" in
+            "Windows")
+              PLATFORM=windows
+              BINARY_SRC="build/Release/${DLL_TARGET}.dll"
+              BINARY_NAME="${DLL_TARGET}.dll"
+              ;;
+            "Linux")
+              PLATFORM=linux
+              BINARY_SRC="build/lib${DLL_TARGET}.so"
+              BINARY_NAME="lib${DLL_TARGET}.so"
+              ;;
+            "macOS")
+              PLATFORM=macos
+              BINARY_SRC="build/lib${DLL_TARGET}.dylib"
+              BINARY_NAME="lib${DLL_TARGET}.dylib"
+              ;;
+            *)
+              echo "Unknown OS: ${RUNNER_OS}"
+              exit 1
+              ;;
+          esac
+
+          echo "Platform=${PLATFORM}" >> $GITHUB_OUTPUT
+          echo "BinarySrc=${BINARY_SRC}" >> $GITHUB_OUTPUT
+          echo "BinaryName=${BINARY_NAME}" >> $GITHUB_OUTPUT
+
+          # prepare package dir
+          rm -rf package
+          mkdir package
+
+          # copy binary (fail if missing)
+          if [ ! -f "${BINARY_SRC}" ]; then
+            echo "ERROR: built binary not found at ${BINARY_SRC}"
+            ls -la build || true
+            exit 2
+          fi
+          cp "${BINARY_SRC}" "package/${BINARY_NAME}"
+
+          # include license and attribution if present
+          if [ -f "${GITHUB_WORKSPACE}/LICENSE" ]; then
+            cp "${GITHUB_WORKSPACE}/LICENSE" package/
+          elif [ -f "${GITHUB_WORKSPACE}/LICENSE.md" ]; then
+            cp "${GITHUB_WORKSPACE}/LICENSE.md" package/
+          fi
+
+          if [ -f "${GITHUB_WORKSPACE}/docs/ATTRIBUTION.md" ]; then
+            cp "${GITHUB_WORKSPACE}/docs/ATTRIBUTION.md" package/
+          fi
+
+          # create zip named jtf-{platform}-{arch}-{version}.zip
+          ZIPNAME="jtf-${PLATFORM}-${ARCH}-${VERSION}.zip"
+          cd package
+          zip -r "../${ZIPNAME}" ./*
+          cd ..
+
+          # emit zip name for upload
+          echo "zip=${ZIPNAME}" >> $GITHUB_OUTPUT
+        shell: bash
+        env:
+          RUNNER_OS: ${{ runner.os }}
+
+      - name: Upload artifact (zip)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.zip }}
+          path: ${{ steps.package.outputs.zip }}
+
+  release:
+    name: Create Release & Upload Assets
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Compute SHA256 and produce manifest
+        id: manifest
+        run: |
+          set -e
+          VERSION=${GITHUB_REF#refs/tags/}
+          cd artifacts
+
+          # find all zip files that match our pattern
+          ZIPS=( jtf-*-${ARCH}-${VERSION}.zip )
+          if [ ${#ZIPS[@]} -eq 0 ]; then
+            echo "No zip artifacts found!"
+            ls -la
+            exit 1
+          fi
+
+          # compute sha256 for each zip, write .sha256 file
+          for z in "${ZIPS[@]}"; do
+            sha256sum "$z" | awk '{print $1}' > "${z}.sha256"
+          done
+
+          # build manifest JSON
+          MANIFEST="jtf-manifest-${VERSION}.json"
+          echo "{" > "$MANIFEST"
+          echo "  \"version\": \"${VERSION}\"," >> "$MANIFEST"
+          echo "  \"assets\": {" >> "$MANIFEST"
+
+          # write asset entries
+          FIRST=true
+          for z in "${ZIPS[@]}"; do
+            file="${z}"
+            sha=$(cat "${z}.sha256")
+            case "$z" in
+              jtf-windows-*)
+                key="windows"
+                ;;
+              jtf-linux-*)
+                key="linux"
+                ;;
+              jtf-macos-*)
+                key="macos"
+                ;;
+              *)
+                key="$z"
+                ;;
+            esac
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+              comma=""
+            else
+              comma=","
+            fi
+            echo "    ${comma} \"${key}\": { \"file\": \"${file}\", \"sha256\": \"${sha}\" }" >> "$MANIFEST"
+          done
+
+          echo "  }" >> "$MANIFEST"
+          echo "}" >> "$MANIFEST"
+
+          ls -la
+          echo "manifest=${MANIFEST}" >> $GITHUB_OUTPUT
+        shell: bash
+        env:
+          ARCH: x64
+
+      - name: Create GitHub Release (and upload assets)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: JTF ${{ github.ref_name }}
+          files: |
+            artifacts/*.zip
+            artifacts/*.zip.sha256
+            artifacts/${{ steps.manifest.outputs.manifest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

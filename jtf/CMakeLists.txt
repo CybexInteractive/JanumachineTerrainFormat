@@ -6,13 +6,21 @@ add_library(jtf SHARED)
 # versioning
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/jtf_version.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/jtf_version.h
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/jtf_version.h
     @ONLY
 )
 
+# version defines
+#target_compile_definitions(jtf PRIVATE
+#	JTF_VERSION_MAJOR=${JTF_VERSION_MAJOR}
+#    JTF_VERSION_MINOR=${JTF_VERSION_MINOR}
+#    JTF_VERSION_PATCH=${JTF_VERSION_PATCH}
+#	JTF_VERSION_STR="v${JTF_VERSION_MAJOR}.${JTF_VERSION_MINOR}.${JTF_VERSION_PATCH}"
+#)
+
 # include directories
 target_include_directories(jtf PUBLIC
-	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}/generated
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
@@ -23,7 +31,7 @@ target_sources(jtf
         src/jtf_reader.cpp
         src/jtf_writer.cpp
 		src/jtf_c_api.cpp
-		include/jtf_version.h)
+)
 
 # C++ standard
 set_target_properties(jtf PROPERTIES
@@ -49,13 +57,6 @@ if(WIN32)
 		PREFIX ""
 	)
 endif()
-
-# version defines
-target_compile_definitions(jtf PRIVATE
-	JTF_VERSION_MAJOR=${JTF_VERSION_MAJOR}
-    JTF_VERSION_MINOR=${JTF_VERSION_MINOR}
-    JTF_VERSION_PATCH=${JTF_VERSION_PATCH}
-)
 
 # file metadata
 # windows

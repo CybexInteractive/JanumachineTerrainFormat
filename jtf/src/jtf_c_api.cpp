@@ -31,7 +31,7 @@ static inline JTF_Log BuildLog(JTF_Result result, const char* message)
 	JTF_Log log{};
 	log.result = result;
 	//strncpy_s(log.message, message ? message : "", JTF_LOG_MESSAGE_LIMIT); // MSVC‐only (Windows)
-	snprintf(log.message, JTF_LOG_MESSAGE_LIMIT, "%s", message ? message : ""); // all platforms
+	snprintf(log.message, JTF_LOG_MESSAGE_LIMIT, "%.*s", JTF_LOG_MESSAGE_LIMIT - 1, message ? message : ""); // all platforms
 	return log;
 }
 

@@ -128,7 +128,7 @@ jobs:
       - name: Upload artifact (zip)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.package.outputs.zip }}
+          name: jtf-package
           path: ${{ steps.package.outputs.zip }}
 
   release:
@@ -147,6 +147,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: JTF ${{ github.ref_name }}
-          files: artifacts/*.zip
+          files: artifacts/jtf-package/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

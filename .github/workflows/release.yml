@@ -98,6 +98,9 @@ jobs:
 
           # create zip named jtf-{platform}-{arch}-{version}.zip
           ZIPNAME="jtf-${PLATFORM}-${ARCH}-${VERSION}.zip"
+          # sanitize slashes just in case
+          ZIPNAME=${ZIPNAME//\//-}
+          echo "Creating zip: ../${ZIPNAME}"
           cd package
           if [[ "$PLATFORM" == "windows" ]]; then
           powershell -Command "Compress-Archive -Path * -DestinationPath ../${ZIPNAME}"

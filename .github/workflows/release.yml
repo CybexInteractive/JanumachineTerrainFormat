@@ -99,7 +99,11 @@ jobs:
           # create zip named jtf-{platform}-{arch}-{version}.zip
           ZIPNAME="jtf-${PLATFORM}-${ARCH}-${VERSION}.zip"
           cd package
+          if [[ "$PLATFORM" == "windows" ]]; then
+          powershell -Command "Compress-Archive -Path * -DestinationPath ../${ZIPNAME}"
+          else
           zip -r "../${ZIPNAME}" ./*
+          fi
           cd ..
 
           # emit zip name for upload

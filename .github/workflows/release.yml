@@ -54,7 +54,7 @@ jobs:
               ;;
             "Linux")
               PLATFORM=linux
-              BINARY_SRC="build/lib${DLL_TARGET}.so"
+              BINARY_SRC="build/bin/lib${DLL_TARGET}.so"
               BINARY_NAME="lib${DLL_TARGET}.so"
               ;;
             "macOS")

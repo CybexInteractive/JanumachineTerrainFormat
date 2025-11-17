@@ -44,7 +44,8 @@ jobs:
       - name: Package binary + license + attribution
         id: package
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
+          #VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${{ github.event.inputs.tag }}
           # map runner.os -> platform token
           case "${RUNNER_OS}" in
             "Windows")
@@ -128,7 +129,8 @@ jobs:
         id: manifest
         run: |
           set -e
-          VERSION=${GITHUB_REF#refs/tags/}
+          #VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${{ github.event.inputs.tag }}
           cd artifacts
 
           # find all zip files that match our pattern

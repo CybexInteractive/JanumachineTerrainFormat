@@ -37,9 +37,21 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
         shell: bash
 
-      - name: Ensure zip is installed
-        if: runner.os != 'Windows'
-        run: sudo apt-get update && sudo apt-get install -y zip
+      - name: Ensure zip is installed MacOS
+        if: runner.os == 'macOS'
+        run: |
+          if ! command -v zip >/dev/null 2>&1; then
+            echo "Installing zip..."
+            brew install zip
+          else
+            echo "zip already installed"
+          fi
+
+      - name: Ensure zip is installed Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
 
       - name: Build
         run: cmake --build build --config Release

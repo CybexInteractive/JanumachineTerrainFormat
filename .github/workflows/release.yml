@@ -37,6 +37,10 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
         shell: bash
 
+      - name: Ensure zip is installed
+        if: runner.os != 'Windows'
+        run: sudo apt-get update && sudo apt-get install -y zip
+
       - name: Build
         run: cmake --build build --config Release
         shell: bash
@@ -96,16 +100,29 @@ jobs:
             cp "${GITHUB_WORKSPACE}/docs/ATTRIBUTION.md" package/
           fi
 
+
           # create zip named jtf-{platform}-{arch}-{version}.zip
           ZIPNAME="jtf-${PLATFORM}-${ARCH}-${VERSION}.zip"
           # sanitize slashes just in case
           ZIPNAME=${ZIPNAME//\//-}
+
           echo "Creating zip: ../${ZIPNAME}"
+
           cd package
           if [[ "$PLATFORM" == "windows" ]]; then
-          powershell -Command "Compress-Archive -Path * -DestinationPath ../${ZIPNAME}"
+            powershell -Command "Compress-Archive -Path * -DestinationPath ../${ZIPNAME}"
           else
-          zip -r "../${ZIPNAME}" ./*
+            if ! command -v zip >/dev/null 2>&1; then
+              echo "ERROR: zip not installed!"
+              exit 1
+            fi
+            zip -r "../${ZIPNAME}" ./*
+            # verify the file exists
+            if [ ! -f "../${ZIPNAME}" ]; then
+              echo "ERROR: zip file not created!"
+              ls -la ..
+              exit 1
+            fi
           fi
           cd ..
 

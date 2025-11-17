@@ -4,11 +4,11 @@ on:
   push:
     tags:
       - "v*.*.*"
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag to release"
-        required: true
+#  workflow_dispatch:
+#    inputs:
+#      tag:
+#        description: "Tag to release"
+#        required: true
 
 env:
   DLL_TARGET: jtf
@@ -128,7 +128,7 @@ jobs:
       - name: Upload artifact (zip)
         uses: actions/upload-artifact@v4
         with:
-          name: jtf-package
+          name: ${{ steps.package.outputs.zip }}
           path: ${{ steps.package.outputs.zip }}
 
   release:
@@ -147,6 +147,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: JTF ${{ github.ref_name }}
-          files: artifacts/jtf-package/*.zip
+          files: artifacts/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

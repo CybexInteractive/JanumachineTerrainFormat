@@ -59,7 +59,7 @@ jobs:
               ;;
             "macOS")
               PLATFORM=macos
-              BINARY_SRC="build/lib${DLL_TARGET}.dylib"
+              BINARY_SRC="build/bin/lib${DLL_TARGET}.dylib"
               BINARY_NAME="lib${DLL_TARGET}.dylib"
               ;;
             *)

@@ -50,7 +50,7 @@ jobs:
           case "${RUNNER_OS}" in
             "Windows")
               PLATFORM=windows
-              BINARY_SRC="build/Release/${DLL_TARGET}.dll"
+              BINARY_SRC="build/bin/${DLL_TARGET}.dll"
               BINARY_NAME="${DLL_TARGET}.dll"
               ;;
             "Linux")

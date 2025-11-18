@@ -140,41 +140,53 @@ jobs:
     needs: build
 
     steps:
-      - name: Generate release manifest
-        run: |
-          VERSION="${{ github.event.inputs.tag }}"
-          DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-
-          echo '{' > manifest.json
-          echo "  \"version\": \"${VERSION}\"," >> manifest.json
-          echo "  \"tag\": \"${VERSION}\"," >> manifest.json
-          echo "  \"release_date\": \"${DATE}\"," >> manifest.json
-          echo "  \"artifacts\": {" >> manifest.json
-
-          FIRST=1
-          for FILE in artifacts/*.zip; do
-            BASENAME=$(basename "$FILE")
-            PLATFORM=$(echo "$FILE" | sed -E 's/artifacts\/jtf-(.*)-v.*/\1/')
-
-            if [ $FIRST -eq 0 ]; then
-              echo "    ," >> manifest.json
-            fi
-            FIRST=0
-
-            echo "    \"${PLATFORM}\": {" >> manifest.json
-            echo "      \"file\": \"${BASENAME}\"" >> manifest.json
-            echo -n "    }" >> manifest.json
-          done
-
-          echo "" >> manifest.json
-          echo "  }" >> manifest.json
-          echo "}" >> manifest.json
-
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
+
+      - name: Generate manifest.json
+        shell: bash
+        run: |
+          echo "Generating manifest..."
+
+          MANIFEST_PATH="manifest.json"
+          RELEASE_TAG="${{ env.RELEASE_TAG }}"
+          RELEASE_VERSION="${{ env.RELEASE_TAG }}"
+          RELEASE_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          echo "{"                               >  "$MANIFEST_PATH"
+          echo "  \"version\": \"${RELEASE_VERSION}\"," >> "$MANIFEST_PATH"
+          echo "  \"tag\": \"${RELEASE_TAG}\","        >> "$MANIFEST_PATH"
+          echo "  \"release_date\": \"${RELEASE_DATE}\"," >> "$MANIFEST_PATH"
+          echo "  \"artifacts\": {"                     >> "$MANIFEST_PATH"
+
+          FIRST=true
+          for f in artifacts/*.zip; do
+            NAME=$(basename "$f")
+
+            # comma handling
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              echo "," >> "$MANIFEST_PATH"
+            fi
+
+            DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${RELEASE_TAG}/${NAME}"
+
+            echo "    \"${NAME}\": {" >> "$MANIFEST_PATH"
+            echo "      \"file\": \"${NAME}\"," >> "$MANIFEST_PATH"
+            echo "      \"url\": \"${DOWNLOAD_URL}\"" >> "$MANIFEST_PATH"
+            echo -n "    }" >> "$MANIFEST_PATH"
+          done
+
+          echo "" >> "$MANIFEST_PATH"
+          echo "  }" >> "$MANIFEST_PATH"
+          echo "}" >> "$MANIFEST_PATH"
+
+          echo "Manifest generated:"
+          cat manifest.json
 
       - name: Create GitHub Release (and upload assets)
         uses: softprops/action-gh-release@v2

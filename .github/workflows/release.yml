@@ -140,6 +140,36 @@ jobs:
     needs: build
 
     steps:
+      - name: Generate release manifest
+        run: |
+          VERSION="${{ github.event.inputs.tag }}"
+          DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          echo '{' > manifest.json
+          echo "  \"version\": \"${VERSION}\"," >> manifest.json
+          echo "  \"tag\": \"${VERSION}\"," >> manifest.json
+          echo "  \"release_date\": \"${DATE}\"," >> manifest.json
+          echo "  \"artifacts\": {" >> manifest.json
+
+          FIRST=1
+          for FILE in artifacts/*.zip; do
+            BASENAME=$(basename "$FILE")
+            PLATFORM=$(echo "$FILE" | sed -E 's/artifacts\/jtf-(.*)-v.*/\1/')
+
+            if [ $FIRST -eq 0 ]; then
+              echo "    ," >> manifest.json
+            fi
+            FIRST=0
+
+            echo "    \"${PLATFORM}\": {" >> manifest.json
+            echo "      \"file\": \"${BASENAME}\"" >> manifest.json
+            echo -n "    }" >> manifest.json
+          done
+
+          echo "" >> manifest.json
+          echo "  }" >> manifest.json
+          echo "}" >> manifest.json
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:

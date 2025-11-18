@@ -10,6 +10,9 @@ on:
         description: "Tag to release"
         required: true
 
+permissions:
+  contents: write
+
 env:
   DLL_TARGET: jtf
   ARCH: x64
@@ -148,8 +151,6 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.tag }}
           name: JTF ${{ github.event.inputs.tag }}
-          #tag_name: ${{ github.ref_name }}
-          #name: JTF ${{ github.ref_name }}
           files: artifacts/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

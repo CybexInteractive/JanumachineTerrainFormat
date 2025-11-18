@@ -152,8 +152,8 @@ jobs:
           echo "Generating manifest..."
 
           MANIFEST_PATH="manifest.json"
-          RELEASE_TAG="${{ env.RELEASE_TAG }}"
-          RELEASE_VERSION="${{ env.RELEASE_TAG }}"
+          RELEASE_TAG="${{ github.event.inputs.tag }}"
+          RELEASE_VERSION="${{ github.event.inputs.tag }}"
           RELEASE_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
           echo "{"                               >  "$MANIFEST_PATH"

@@ -181,6 +181,8 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.tag }}
           name: JTF ${{ github.event.inputs.tag }}
-          files: artifacts/*.zip
+          files: | 
+            artifacts/*.zip
+            manifest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

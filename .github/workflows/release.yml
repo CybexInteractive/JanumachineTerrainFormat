@@ -145,8 +145,10 @@ jobs:
       - name: Create GitHub Release (and upload assets)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: JTF ${{ github.ref_name }}
+          tag_name: ${{ github.event.inputs.tag }}
+          name: JTF ${{ github.event.inputs.tag }}
+          #tag_name: ${{ github.ref_name }}
+          #name: JTF ${{ github.ref_name }}
           files: artifacts/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

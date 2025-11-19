@@ -13,11 +13,12 @@ struct JTF
 {
 	uint8_t VersionMajor = 0;
 	uint8_t VersionMinor = 0;
+	uint8_t VersionPatch = 0;
 
 	uint16_t Width = 0;
 	uint16_t Height = 0;
 
-	uint16_t BitDepth = 0;
+	uint8_t BitDepth = 0;
 
 	int32_t BoundsLower = 0;
 	int32_t BoundsUpper = 0;
@@ -84,6 +85,7 @@ extern "C"
 
 			data->VersionMajor = jtf.VersionMajor;
 			data->VersionMinor = jtf.VersionMinor;
+			data->VersionPatch = jtf.VersionPatch;
 			data->Width = jtf.Width;
 			data->Height = jtf.Height;
 			data->BitDepth = jtf.BitDepth;

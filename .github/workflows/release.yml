@@ -164,8 +164,6 @@ jobs:
 
           FIRST=true
           for f in artifacts/*.zip; do
-            NAME=$(basename "$f")
-
             # comma handling
             if [ "$FIRST" = true ]; then
               FIRST=false
@@ -173,9 +171,11 @@ jobs:
               echo "," >> "$MANIFEST_PATH"
             fi
 
+            NAME=$(basename "$f")
+            PLATFORM=$(echo "$NAME" | cut -d'-' -f2)
             DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${RELEASE_TAG}/${NAME}"
 
-            echo "    \"${NAME}\": {" >> "$MANIFEST_PATH"
+            echo "    \"${PLATFORM}\": {" >> "$MANIFEST_PATH"
             echo "      \"file\": \"${NAME}\"," >> "$MANIFEST_PATH"
             echo "      \"url\": \"${DOWNLOAD_URL}\"" >> "$MANIFEST_PATH"
             echo -n "    }" >> "$MANIFEST_PATH"

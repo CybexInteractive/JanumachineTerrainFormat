@@ -114,7 +114,7 @@ String form &hairsp;<code><span style="color: #bfbf00;">"\x8AJTF\r\n\x1B\n"</spa
 | Version Patch | 1 | <code><span style="color: #5798d9;">byte</span></code> ||
 | Width | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid width (limited to <code><span style="color: #abc8a8;">4097</span></code>) |
 | Height | 2 | <code><span style="color: #5c9064;">UInt16</span></code> | Grid height (limited to <code><span style="color: #abc8a8;">4097</span></code>) |
-| Bit Depth | 2 | <code><span style="color: #5798d9;">byte</span></code> | Bits per Sample (<code><span style="color: #abc8a8;">32</span></code> = <code><span style="color: #5798d9;">float</span></code>, <code><span style="color: #abc8a8;">64</span></code> = <code><span style="color: #5798d9;">double</span></code>) |
+| Bit Depth | 1 | <code><span style="color: #5798d9;">byte</span></code> | Bits per Sample (<code><span style="color: #abc8a8;">32</span></code> = <code><span style="color: #5798d9;">float</span></code>, <code><span style="color: #abc8a8;">64</span></code> = <code><span style="color: #5798d9;">double</span></code>) |
 | Reserved | 8 | <code><span style="color: #5c9064;">UInt64</span></code> | Padding / unused / reserved for future use. Must be zero.|
 | Bounds Lower | 4 | <code><span style="color: #5c9064;">Int32</span></code> | Floor of lowest elevation. |
 | Bounds Upper | 4 | <code><span style="color: #5c9064;">Int32</span></code> | Ceiling of highest elevation. |

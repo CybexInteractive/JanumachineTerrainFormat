@@ -64,6 +64,34 @@ namespace cybex_interactive::jtf
 			 | (static_cast<uint64_t>(pointer[3]) << 56);
 	}
 
+	inline static float ReadFloat_LittleEndian(const uint8_t* pointer)
+	{
+		uint32_t raw = (static_cast<uint32_t>(pointer[0]))
+					 | (static_cast<uint32_t>(pointer[1]) << 8)
+					 | (static_cast<uint32_t>(pointer[2]) << 16)
+					 | (static_cast<uint32_t>(pointer[2]) << 24);
+		float value;
+		static_assert(sizeof(value) == sizeof(raw));
+		std::memcpy(&value, &raw, sizeof(value));
+		return value;
+	}
+
+	inline static double ReadDouble_LittleEndian(const uint8_t* pointer)
+	{
+		uint64_t raw = (static_cast<uint64_t>(pointer[0]))
+					 | (static_cast<uint64_t>(pointer[1]) << 8)
+					 | (static_cast<uint64_t>(pointer[2]) << 16)
+					 | (static_cast<uint64_t>(pointer[2]) << 24)
+					 | (static_cast<uint64_t>(pointer[2]) << 32)
+					 | (static_cast<uint64_t>(pointer[2]) << 40)
+					 | (static_cast<uint64_t>(pointer[2]) << 48)
+					 | (static_cast<uint64_t>(pointer[3]) << 56);
+		double value;
+		static_assert(sizeof(value) == sizeof(raw));
+		std::memcpy(&value, &raw, sizeof(value));
+		return value;
+	}
+
 
 	uint32_t JTFFile::ReadChunkType(const std::string& filePath, std::ifstream& file)
 	{
@@ -236,14 +264,19 @@ namespace cybex_interactive::jtf
 
 		if (jtf.BitDepth == 32)
 		{
-			const float* src_f = reinterpret_cast<const float*>(payload.data());
 			for (size_t i = 0; i < sampleCount; ++i)
-				jtf.HeightSamples[i] = static_cast<double>(src_f[i]);
+			{
+				const uint8_t* pointer = payload.data() + i * 4;
+				jtf.HeightSamples[i] = static_cast<double>(ReadFloat_LittleEndian(pointer));
+			}
 		}
 		else if (jtf.BitDepth == 64)
 		{
-			const double* src_d = reinterpret_cast<const double*>(payload.data());
-			std::memcpy(jtf.HeightSamples.data(), src_d, payloadSize);
+			for (size_t i = 0; i < sampleCount; ++i)
+			{
+				const uint8_t* pointer = payload.data() + i * 8;
+				jtf.HeightSamples[i] = ReadDouble_LittleEndian(pointer);
+			}
 		}
 		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.BitDepth)));
 	}

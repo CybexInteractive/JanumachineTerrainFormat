@@ -20,8 +20,9 @@ Work in progress
 **Added**  
 **Fixed**  
 - Writer writing wrong version (copy paste error, writing minor in place of patch version number).
-- Reader not ensuring correct endianness of HEAD chunk.
 - Ensuring chunk ids are written (human readable) as little-endian to file.
+- Reader not ensuring correct endianness of HEAD chunk payload.
+- Reader not ensuring little-endianness of height samples.
 
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].

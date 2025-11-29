@@ -29,7 +29,7 @@ namespace cybex_interactive::jtf
 		uint32_t raw = (static_cast<uint32_t>(pointer[0]))
 					 | (static_cast<uint32_t>(pointer[1]) << 8)
 					 | (static_cast<uint32_t>(pointer[2]) << 16)
-					 | (static_cast<uint32_t>(pointer[2]) << 24);
+					 | (static_cast<uint32_t>(pointer[3]) << 24);
 		return static_cast<int32_t>(raw);
 	}
 
@@ -49,7 +49,7 @@ namespace cybex_interactive::jtf
 		return (static_cast<uint32_t>(pointer[0]))
 			 | (static_cast<uint32_t>(pointer[1]) << 8)
 			 | (static_cast<uint32_t>(pointer[2]) << 16)
-			 | (static_cast<uint32_t>(pointer[2]) << 24);
+			 | (static_cast<uint32_t>(pointer[3]) << 24);
 	}
 
 	inline static uint64_t ReadUInt64_LittleEndian(const uint8_t* pointer)
@@ -57,11 +57,11 @@ namespace cybex_interactive::jtf
 		return (static_cast<uint64_t>(pointer[0]))
 			 | (static_cast<uint64_t>(pointer[1]) << 8)
 			 | (static_cast<uint64_t>(pointer[2]) << 16)
-			 | (static_cast<uint64_t>(pointer[2]) << 24)
-			 | (static_cast<uint64_t>(pointer[2]) << 32)
-			 | (static_cast<uint64_t>(pointer[2]) << 40)
-			 | (static_cast<uint64_t>(pointer[2]) << 48)
-			 | (static_cast<uint64_t>(pointer[3]) << 56);
+			 | (static_cast<uint64_t>(pointer[3]) << 24)
+			 | (static_cast<uint64_t>(pointer[4]) << 32)
+			 | (static_cast<uint64_t>(pointer[5]) << 40)
+			 | (static_cast<uint64_t>(pointer[6]) << 48)
+			 | (static_cast<uint64_t>(pointer[7]) << 56);
 	}
 
 	inline static float ReadFloat_LittleEndian(const uint8_t* pointer)
@@ -69,7 +69,7 @@ namespace cybex_interactive::jtf
 		uint32_t raw = (static_cast<uint32_t>(pointer[0]))
 					 | (static_cast<uint32_t>(pointer[1]) << 8)
 					 | (static_cast<uint32_t>(pointer[2]) << 16)
-					 | (static_cast<uint32_t>(pointer[2]) << 24);
+					 | (static_cast<uint32_t>(pointer[3]) << 24);
 		float value;
 		static_assert(sizeof(value) == sizeof(raw));
 		std::memcpy(&value, &raw, sizeof(value));
@@ -81,11 +81,11 @@ namespace cybex_interactive::jtf
 		uint64_t raw = (static_cast<uint64_t>(pointer[0]))
 					 | (static_cast<uint64_t>(pointer[1]) << 8)
 					 | (static_cast<uint64_t>(pointer[2]) << 16)
-					 | (static_cast<uint64_t>(pointer[2]) << 24)
-					 | (static_cast<uint64_t>(pointer[2]) << 32)
-					 | (static_cast<uint64_t>(pointer[2]) << 40)
-					 | (static_cast<uint64_t>(pointer[2]) << 48)
-					 | (static_cast<uint64_t>(pointer[3]) << 56);
+					 | (static_cast<uint64_t>(pointer[3]) << 24)
+					 | (static_cast<uint64_t>(pointer[4]) << 32)
+					 | (static_cast<uint64_t>(pointer[5]) << 40)
+					 | (static_cast<uint64_t>(pointer[6]) << 48)
+					 | (static_cast<uint64_t>(pointer[7]) << 56);
 		double value;
 		static_assert(sizeof(value) == sizeof(raw));
 		std::memcpy(&value, &raw, sizeof(value));
@@ -106,8 +106,6 @@ namespace cybex_interactive::jtf
 
 		return chunkType;
 	}
-
-
 
 	inline static bool VerifySignature(const uint8_t* bytes)
 	{

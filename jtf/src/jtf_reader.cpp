@@ -216,7 +216,7 @@ namespace cybex_interactive::jtf
 		// dimensions
 		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
-		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
+		jtf.Height = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
 
 		// bit depth

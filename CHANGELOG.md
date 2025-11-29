@@ -1,6 +1,7 @@
 ﻿# 🧾Changelog
 All notable changes to this project will be dosumented in this file.
 
+<!--
 ## 🚧 Unreleased
 Work in progress
 
@@ -10,6 +11,22 @@ Work in progress
 **Deprecated**  
 **Removed**  
 **Security**  
+-->
+
+## ⭐ [JTF 1.1.0] Unreleased ─ 15-11-2025
+<!--(https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0)-->
+Work in progress
+
+**Added**  
+**Fixed**  
+- Writer writing wrong version (copy paste error, writing minor in place of patch version number)
+
+**Changed**  
+- Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error]
+
+**Deprecated**  
+**Removed**  
+**Security** 
 
 ## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.

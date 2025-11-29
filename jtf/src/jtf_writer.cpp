@@ -125,7 +125,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { &chunkCrc, &fileCrc });
 		// version patch
 		const uint8_t versionPatch = JTF_VERSION_PATCH;
-		WriteUInt8_LittleEndian(file, versionMinor);
+		WriteUInt8_LittleEndian(file, versionPatch);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionPatch), sizeof(versionPatch), { &chunkCrc, &fileCrc });
 
 		// dimensions

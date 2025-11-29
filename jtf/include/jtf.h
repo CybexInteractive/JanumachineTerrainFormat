@@ -27,17 +27,17 @@ namespace cybex_interactive::jtf
 			(static_cast<uint32_t>(d) << 24);
 	}
 
-
 	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID_LittleEndian('H','E','A','D');
 	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID_LittleEndian('H','M','A','P');
 	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID_LittleEndian('F','E','N','D');
+
 	constexpr inline std::string DecodeChunkID(uint32_t chunkID) noexcept
 	{
 		char name[5] = {
-			static_cast<char>((chunkID >> 24) & 0xFF),
-			static_cast<char>((chunkID >> 16) & 0xFF),
-			static_cast<char>((chunkID >> 8) & 0xFF),
 			static_cast<char>(chunkID & 0xFF),
+			static_cast<char>((chunkID >> 8) & 0xFF),
+			static_cast<char>((chunkID >> 16) & 0xFF),
+			static_cast<char>((chunkID >> 24) & 0xFF),
 			'\0' // null terminator
 		};
 		return std::string(name);

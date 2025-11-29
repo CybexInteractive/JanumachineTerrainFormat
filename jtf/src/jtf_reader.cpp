@@ -80,6 +80,7 @@ namespace cybex_interactive::jtf
 	}
 
 
+
 	inline static bool VerifySignature(const uint8_t* bytes)
 	{
 		uint64_t signature = JTF_SIGNATURE;

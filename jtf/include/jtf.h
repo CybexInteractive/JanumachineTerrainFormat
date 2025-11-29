@@ -18,26 +18,19 @@ namespace cybex_interactive::jtf
 	constexpr uint32_t MAP_AXIS_SIZE_LIMIT = 4097;
 
 	// ensure chunk IDs are built big-endian
-	constexpr inline uint32_t BuildChunkID(char a, char b, char c, char d) noexcept
+	constexpr inline uint32_t BuildChunkID_LittleEndian(char a, char b, char c, char d) noexcept
 	{
-		if constexpr (std::endian::native == std::endian::big)
-		{
-			return 
-				(static_cast<uint32_t>(a) << 24) |
-				(static_cast<uint32_t>(b) << 16) |
-				(static_cast<uint32_t>(c) << 8) |
-				(static_cast<uint32_t>(d));
-		}
-		else
-		{
-			return
-				(static_cast<uint32_t>(a)) |
-				(static_cast<uint32_t>(b) << 8) |
-				(static_cast<uint32_t>(c) << 16) |
-				(static_cast<uint32_t>(d) << 24);
-		}
+		return
+			(static_cast<uint32_t>(a)) |
+			(static_cast<uint32_t>(b) << 8) |
+			(static_cast<uint32_t>(c) << 16) |
+			(static_cast<uint32_t>(d) << 24);
 	}
 
+
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID_LittleEndian('H','E','A','D');
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID_LittleEndian('H','M','A','P');
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID_LittleEndian('F','E','N','D');
 	constexpr inline std::string DecodeChunkID(uint32_t chunkID) noexcept
 	{
 		char name[5] = {
@@ -49,10 +42,6 @@ namespace cybex_interactive::jtf
 		};
 		return std::string(name);
 	}
-
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID('H','E','A','D');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID('H','M','A','P');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID('F','E','N','D');
 
 
 	class JTFFile

@@ -23,6 +23,8 @@ Work in progress
 - Ensuring chunk ids are written (human readable) as little-endian to file.
 - Reader not ensuring correct endianness of HEAD chunk payload.
 - Reader not ensuring little-endianness of height samples.
+- Reader not ensuring little-endianness of CRC values.
+- Reader not ensuring CRC values are addet to file CRC as is in raw file.
 
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].

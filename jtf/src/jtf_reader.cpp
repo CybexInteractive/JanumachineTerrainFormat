@@ -143,9 +143,10 @@ namespace cybex_interactive::jtf
 		while (file && !fendReached)
 		{
 			// read chunk length
-			uint32_t payloadSize{};
-			ReadToBuffer(filePath, file, &payloadSize, sizeof(payloadSize));
-			AppendToCrc(reinterpret_cast<uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
+			uint8_t payloadSizeBytes[4];
+			ReadToBuffer(filePath, file, &payloadSizeBytes, sizeof(payloadSizeBytes));
+			AppendToCrc(payloadSizeBytes, sizeof(payloadSizeBytes), { &fileCrc });
+			uint32_t payloadSize = ReadUInt32_LittleEndian(payloadSizeBytes);
 
 			// read chunk type
 			uint32_t chunkType = ReadChunkType(filePath, file);
@@ -191,9 +192,10 @@ namespace cybex_interactive::jtf
 		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
 
 		// read expected chunk crc
-		uint32_t expectedCrc;
-		ReadToBuffer(filePath, file, &expectedCrc, sizeof(expectedCrc));
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&expectedCrc), sizeof(expectedCrc), { &fileCrc });
+		uint8_t expectedCrcBytes[4];
+		ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+		AppendToCrc(expectedCrcBytes, sizeof(expectedCrcBytes), { &fileCrc });
+		uint32_t expectedCrc = ReadUInt32_LittleEndian(expectedCrcBytes);
 
 		// crc compare
 		uint32_t computedCrc = chunkCrc.GetCurrentHashAsUInt32();
@@ -248,9 +250,10 @@ namespace cybex_interactive::jtf
 		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
 
 		// read expected chunk crc
-		uint32_t expectedCrc;
-		ReadToBuffer(filePath, file, &expectedCrc, sizeof(expectedCrc));
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&expectedCrc), sizeof(expectedCrc), { &fileCrc });
+		uint8_t expectedCrcBytes[4];
+		ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+		AppendToCrc(expectedCrcBytes, sizeof(expectedCrcBytes), { &fileCrc });
+		uint32_t expectedCrc = ReadUInt32_LittleEndian(expectedCrcBytes);
 
 		// crc compare
 		uint32_t computedCrc = chunkCrc.GetCurrentHashAsUInt32();
@@ -290,9 +293,10 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// read expected chunk crc
-		uint32_t expectedCrc;
-		ReadToBuffer(filePath, file, &expectedCrc, sizeof(expectedCrc));
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&expectedCrc), sizeof(expectedCrc), { &fileCrc });
+		uint8_t expectedCrcBytes[4];
+		ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+		AppendToCrc(expectedCrcBytes, sizeof(expectedCrcBytes), { &fileCrc });
+		uint32_t expectedCrc = ReadUInt32_LittleEndian(expectedCrcBytes);
 
 		uint32_t computedCrc = chunkCrc.GetCurrentHashAsUInt32();
 		if (expectedCrc != computedCrc)
@@ -301,8 +305,10 @@ namespace cybex_interactive::jtf
 
 	void JTFFile::ReadFileCrc(const std::string& filePath, std::ifstream& file, Crc32& fileCrc)
 	{
-		uint32_t expectedCrc;
-		ReadToBuffer(filePath, file, &expectedCrc, sizeof(expectedCrc));
+		// read expected chunk crc
+		uint8_t expectedCrcBytes[4];
+		ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+		uint32_t expectedCrc = ReadUInt32_LittleEndian(expectedCrcBytes);
 
 		uint32_t computedCrc = fileCrc.GetCurrentHashAsUInt32();
 		if (expectedCrc != computedCrc)

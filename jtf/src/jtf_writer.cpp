@@ -111,7 +111,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_HEAD;
+		constexpr uint32_t chunkTypeName = CHUNK_ID_HEAD;
 		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
@@ -169,7 +169,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_HMAP;
+		constexpr uint32_t chunkTypeName = CHUNK_ID_HMAP;
 		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
@@ -194,7 +194,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		// chunk type
-		constexpr uint32_t chunkTypeName = CHUNK_ID_BIG_ENDIAN_FEND;
+		constexpr uint32_t chunkTypeName = CHUNK_ID_FEND;
 		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 

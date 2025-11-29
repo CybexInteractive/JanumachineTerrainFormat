@@ -27,9 +27,9 @@ namespace cybex_interactive::jtf
 			(static_cast<uint32_t>(d) << 24);
 	}
 
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID_LittleEndian('H','E','A','D');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID_LittleEndian('H','M','A','P');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID_LittleEndian('F','E','N','D');
+	constexpr uint32_t CHUNK_ID_HEAD = BuildChunkID_LittleEndian('H','E','A','D');
+	constexpr uint32_t CHUNK_ID_HMAP = BuildChunkID_LittleEndian('H','M','A','P');
+	constexpr uint32_t CHUNK_ID_FEND = BuildChunkID_LittleEndian('F','E','N','D');
 
 	constexpr inline std::string DecodeChunkID(uint32_t chunkID) noexcept
 	{

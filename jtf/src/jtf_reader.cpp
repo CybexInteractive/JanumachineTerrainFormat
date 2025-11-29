@@ -154,15 +154,15 @@ namespace cybex_interactive::jtf
 			// dispatch
 			switch (chunkType)
 			{
-				case CHUNK_ID_BIG_ENDIAN_HEAD:
+				case CHUNK_ID_HEAD:
 					ReadHeadChunk(filePath, file, payloadSize, fileCrc, jtf);
 					break;
 
-				case CHUNK_ID_BIG_ENDIAN_HMAP:
+				case CHUNK_ID_HMAP:
 					ReadHmapChunk(filePath, file, payloadSize, fileCrc, jtf);
 					break;
 
-				case CHUNK_ID_BIG_ENDIAN_FEND:
+				case CHUNK_ID_FEND:
 					ReadFendChunk(filePath, file, payloadSize, fileCrc);
 					fendReached = true;
 					break;

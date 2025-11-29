@@ -13,13 +13,14 @@ Work in progress
 **Security**  
 -->
 
-## ⭐ [JTF 1.1.0] Unreleased ─ 15-11-2025
+## ⭐ [JTF 1.0.1] Unreleased ─ 15-11-2025
 <!--(https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0)-->
 Work in progress
 
 **Added**  
 **Fixed**  
 - Writer writing wrong version (copy paste error, writing minor in place of patch version number)
+- Reader not ensuring correct endianness of HEAD chunk
 
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error]

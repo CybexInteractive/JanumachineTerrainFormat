@@ -38,10 +38,6 @@ namespace cybex_interactive::jtf
 		}
 	}
 
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID('H','E','A','D');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID('H','M','A','P');
-	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID('F','E','N','D');
-
 	constexpr inline std::string DecodeChunkID(uint32_t chunkID) noexcept
 	{
 		char name[5] = {
@@ -53,6 +49,10 @@ namespace cybex_interactive::jtf
 		};
 		return std::string(name);
 	}
+
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HEAD = BuildChunkID('H','E','A','D');
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_HMAP = BuildChunkID('H','M','A','P');
+	constexpr uint32_t CHUNK_ID_BIG_ENDIAN_FEND = BuildChunkID('F','E','N','D');
 
 
 	class JTFFile

@@ -12,7 +12,7 @@ using namespace std;
 
 static string ResultCompare(JTF_Result expected, JTF_Result result)
 {
-	return expected == result ? "Match" : "Mismatch";
+	return expected == result ? "[OK]" : "[Fail]";
 }
 
 static string PrintResult(JTF_Result result)

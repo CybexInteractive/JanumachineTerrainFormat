@@ -23,6 +23,63 @@ namespace cybex_interactive::jtf
 			throw std::runtime_error(FileReadError(filePath, "Unexpected EOF."));
 	}
 
+
+	inline static int32_t ReadInt32_LittleEndian(const uint8_t* pointer)
+	{
+		uint32_t raw = (static_cast<uint32_t>(pointer[0]))
+					 | (static_cast<uint32_t>(pointer[1]) << 8)
+					 | (static_cast<uint32_t>(pointer[2]) << 16)
+					 | (static_cast<uint32_t>(pointer[2]) << 24);
+		return static_cast<int32_t>(raw);
+	}
+
+	inline static uint8_t ReadUInt8_LittleEndian(const uint8_t* pointer)
+	{
+		return (static_cast<uint8_t>(pointer[0]));
+	}
+
+	inline static uint16_t ReadUInt16_LittleEndian(const uint8_t* pointer)
+	{
+		return (static_cast<uint16_t>(pointer[0]))
+			 | (static_cast<uint16_t>(pointer[1]) << 8);
+	}
+
+	inline static uint32_t ReadUInt32_LittleEndian(const uint8_t* pointer)
+	{
+		return (static_cast<uint32_t>(pointer[0]))
+			 | (static_cast<uint32_t>(pointer[1]) << 8)
+			 | (static_cast<uint32_t>(pointer[2]) << 16)
+			 | (static_cast<uint32_t>(pointer[2]) << 24);
+	}
+
+	inline static uint64_t ReadUInt64_LittleEndian(const uint8_t* pointer)
+	{
+		return (static_cast<uint64_t>(pointer[0]))
+			 | (static_cast<uint64_t>(pointer[1]) << 8)
+			 | (static_cast<uint64_t>(pointer[2]) << 16)
+			 | (static_cast<uint64_t>(pointer[2]) << 24)
+			 | (static_cast<uint64_t>(pointer[2]) << 32)
+			 | (static_cast<uint64_t>(pointer[2]) << 40)
+			 | (static_cast<uint64_t>(pointer[2]) << 48)
+			 | (static_cast<uint64_t>(pointer[3]) << 56);
+	}
+
+
+	uint32_t JTFFile::ReadChunkType(const std::string& filePath, std::ifstream& file)
+	{
+		uint8_t bytes[4];
+		ReadToBuffer(filePath, file, bytes, 4);
+
+		uint32_t chunkType =
+			(static_cast<uint32_t>(bytes[0])) |
+			(static_cast<uint32_t>(bytes[1]) << 8) |
+			(static_cast<uint32_t>(bytes[2]) << 16) |
+			(static_cast<uint32_t>(bytes[3]) << 24);
+
+		return chunkType;
+	}
+
+
 	inline static bool VerifySignature(const uint8_t* bytes)
 	{
 		uint64_t signature = JTF_SIGNATURE;
@@ -69,41 +126,27 @@ namespace cybex_interactive::jtf
 			// dispatch
 			switch (chunkType)
 			{
-			case CHUNK_ID_BIG_ENDIAN_HEAD:
-				ReadHeadChunk(filePath, file, payloadSize, fileCrc, jtf);
-				break;
+				case CHUNK_ID_BIG_ENDIAN_HEAD:
+					ReadHeadChunk(filePath, file, payloadSize, fileCrc, jtf);
+					break;
 
-			case CHUNK_ID_BIG_ENDIAN_HMAP:
-				ReadHmapChunk(filePath, file, payloadSize, fileCrc, jtf);
-				break;
+				case CHUNK_ID_BIG_ENDIAN_HMAP:
+					ReadHmapChunk(filePath, file, payloadSize, fileCrc, jtf);
+					break;
 
-			case CHUNK_ID_BIG_ENDIAN_FEND:
-				ReadFendChunk(filePath, file, payloadSize, fileCrc);
-				fendReached = true;
-				break;
+				case CHUNK_ID_BIG_ENDIAN_FEND:
+					ReadFendChunk(filePath, file, payloadSize, fileCrc);
+					fendReached = true;
+					break;
 
-			default:
-				throw std::runtime_error(FileReadError(filePath, std::format("Unknown chunk type '{}'.", DecodeChunkID(chunkType))));
+				default:
+					throw std::runtime_error(FileReadError(filePath, std::format("Unknown chunk type '{}'.", DecodeChunkID(chunkType))));
 			}
 		}
 
 		ReadFileCrc(filePath, file, fileCrc);
 
 		return jtf;
-	}
-
-	uint32_t JTFFile::ReadChunkType(const std::string& filePath, std::ifstream& file)
-	{
-		uint8_t bytes[4];
-		ReadToBuffer(filePath, file, bytes, 4);
-
-		uint32_t chunkType = 
-			(static_cast<uint32_t>(bytes[0])) |
-			(static_cast<uint32_t>(bytes[1]) << 8) |
-			(static_cast<uint32_t>(bytes[2]) << 16) |
-			(static_cast<uint32_t>(bytes[3]) << 24);
-
-		return chunkType;
 	}
 
 	void JTFFile::ReadHeadChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc, JTF& jtf)
@@ -134,28 +177,32 @@ namespace cybex_interactive::jtf
 		size_t offset = 0;
 
 		// version major
-		jtf.VersionMajor = payload[offset++];
+		jtf.VersionMajor = ReadUInt8_LittleEndian(payload.data() + offset);
+		offset++;
 		// version minor
-		jtf.VersionMinor = payload[offset++];
+		jtf.VersionMinor = ReadUInt8_LittleEndian(payload.data() + offset);
+		offset++;
 		// version patch
-		jtf.VersionPatch = payload[offset++];
+		jtf.VersionPatch = ReadUInt8_LittleEndian(payload.data() + offset);
+		offset++;
 
 		// dimensions
-		std::memcpy(&jtf.Width, payload.data() + offset, sizeof(uint16_t));
+		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
-		std::memcpy(&jtf.Height, payload.data() + offset, sizeof(uint16_t));
+		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
 
 		// bit depth
-		jtf.BitDepth = payload[offset++];
+		jtf.BitDepth = ReadUInt8_LittleEndian(payload.data() + offset);
+		offset++;
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
 		offset += 8;
 
 		// bounds
-		std::memcpy(&jtf.BoundsLower, payload.data() + offset, sizeof(uint32_t));
+		jtf.BoundsLower = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
-		std::memcpy(&jtf.BoundsUpper, payload.data() + offset, sizeof(uint32_t));
+		jtf.BoundsUpper = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)

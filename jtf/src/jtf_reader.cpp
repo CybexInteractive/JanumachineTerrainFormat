@@ -19,7 +19,7 @@ namespace cybex_interactive::jtf
 	inline static void ReadToBuffer(const std::string& filePath, std::ifstream& file, void* buffer, size_t size)
 	{
 		file.read(reinterpret_cast<char*>(buffer), size);
-		if (file.gcount() != static_cast<std::streamsize>(size))
+		if (!file || static_cast<std::size_t>(file.gcount()) != size)
 			throw std::runtime_error(FileReadError(filePath, "Unexpected EOF."));
 	}
 

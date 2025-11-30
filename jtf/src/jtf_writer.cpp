@@ -178,9 +178,42 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &chunkCrc, &fileCrc });
 
 		// height data
-		const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
-		file.write(reinterpret_cast<const char*>(heightsData), payloadSize);
-		AppendToCrc(heightsData, payloadSize, { &chunkCrc, &fileCrc });
+		if (std::endian::native == std::endian::big)
+		{
+			std::vector<uint8_t> encoded(payloadSize);
+
+			if (bitDepth == 32)
+			{
+				uint32_t* out = reinterpret_cast<uint32_t*>(encoded.data());
+				for (size_t i = 0; i < heights.size(); ++i)
+				{
+					uint32_t v;
+					std::memcpy(&v, &heights[i], 4);
+					v = byteswap(v);
+					out[i] = v;
+				}
+			}
+			else
+			{
+				uint64_t* out = reinterpret_cast<uint64_t*>(encoded.data());
+				for (size_t i = 0; i < heights.size(); ++i)
+				{
+					uint64_t v;
+					std::memcpy(&v, &heights[i], 8);
+					v = byteswap(v);
+					out[i] = v;
+				}
+			}
+
+			file.write(reinterpret_cast<const char*>(encoded.data()), payloadSize);
+			AppendToCrc(encoded.data(), payloadSize, { &chunkCrc, &fileCrc });
+		}
+		else
+		{
+			const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
+			file.write(reinterpret_cast<const char*>(heightsData), payloadSize);
+			AppendToCrc(heightsData, payloadSize, { &chunkCrc, &fileCrc });
+		}
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();

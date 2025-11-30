@@ -2,7 +2,7 @@
 All notable changes to this project will be dosumented in this file.
 
 <!--
-## 🚧 Unreleased
+## 🚧 Unreleased ─ dd-mm-yyyy
 Work in progress
 
 **Added**  
@@ -13,20 +13,21 @@ Work in progress
 **Security**  
 -->
 
-## ⭐ [JTF 1.0.1] Unreleased ─ 15-11-2025
+## ⭐ [JTF 1.0.1] Unreleased ─ XX-XX-XXXX
 <!--(https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0)-->
 Work in progress
 
 **Added**  
 **Fixed**  
-- Writer writing wrong version (copy paste error, writing minor in place of patch version number).
-- Ensuring chunk ids are written (human readable) as little-endian to file.
 - Reader not ensuring correct endianness of HEAD chunk payload.
 - Reader not ensuring little-endianness of height samples.
 - Reader not ensuring little-endianness of CRC values.
 - Reader not ensuring CRC values are addet to file CRC as is in raw file.
-- Inconsistent CRC handling in FEND chunk.
+- Writer writing wrong version (copy paste error, writing minor in place of patch version number).
+- Writer not ensuring chunk ids are written as little-endian to file (human readable).
 - Writer not ensuring little-endianness of chunk length and type, including value added to CRC.
+- Writer not ensuring little-endianness of height samples.
+- Writer having inconsistent CRC handling in FEND chunk.
 - Remove unnecessary byteswap in writer helper function WriteUInt8_LittleEndian.
 
 **Changed**  

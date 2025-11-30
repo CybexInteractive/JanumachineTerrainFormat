@@ -111,15 +111,15 @@ namespace cybex_interactive::jtf
 
 		// chunk length
 		const uint32_t payloadSize = 32;
-		WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
+		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_HEAD;
-		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
 
 		// version major
 		const uint8_t versionMajor = JTF_VERSION_MAJOR;
@@ -169,15 +169,15 @@ namespace cybex_interactive::jtf
 		// chunk length
 		uint32_t sampleSize = bitDepth / 8;
 		uint32_t payloadSize = static_cast<uint32_t>(heights.size() * sampleSize); // size limit checked in JTFFile::Write
-		WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
+		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_HMAP;
-		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
 
 		// height data
 		const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
@@ -194,19 +194,19 @@ namespace cybex_interactive::jtf
 	{
 		// chunk length
 		const uint32_t payloadSize = 0;
-		WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&payloadSize), sizeof(payloadSize), { &fileCrc });
+		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_FEND;
-		file.write(reinterpret_cast<const char*>(&chunkTypeName), 4);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
+		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 

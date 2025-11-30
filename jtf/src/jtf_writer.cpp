@@ -24,8 +24,6 @@ namespace cybex_interactive::jtf
 	}
 
 	inline static uint8_t WriteUInt8_LittleEndian(std::ofstream& file, uint8_t value) {
-		if constexpr (std::endian::native == std::endian::big)
-			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
 		return value;
 	}

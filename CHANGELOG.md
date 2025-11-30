@@ -27,6 +27,7 @@ Work in progress
 - Reader not ensuring CRC values are addet to file CRC as is in raw file.
 - Inconsistent CRC handling in FEND chunk.
 - Writer not ensuring little-endianness of chunk length and type, including value added to CRC.
+- Remove unnecessary byteswap in writer helper function WriteUInt8_LittleEndian.
 
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].

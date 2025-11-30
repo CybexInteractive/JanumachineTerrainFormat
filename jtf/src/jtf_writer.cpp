@@ -105,7 +105,7 @@ namespace cybex_interactive::jtf
 
 	void JTFFile::WriteHeadChunk(std::ofstream& file, uint16_t width, uint16_t height, uint8_t bitDepth, int32_t boundsLower, int32_t boundsUpper, Crc32& fileCrc)
 	{
-		uint64_t zero64bit = 0;
+		constexpr uint64_t zero64 = 0;
 
 		// chunk length
 		const uint32_t payloadSize = 32;
@@ -143,7 +143,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint8), sizeof(written_uint8), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
-		uint64_t written_uint64 = WriteUInt64_LittleEndian(file, zero64bit);
+		uint64_t written_uint64 = WriteUInt64_LittleEndian(file, zero64);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint64), sizeof(written_uint64), { &chunkCrc, &fileCrc });
 
 		// bounds
@@ -153,7 +153,7 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_int32), sizeof(written_int32), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
-		written_uint64 = WriteUInt64_LittleEndian(file, zero64bit);
+		written_uint64 = WriteUInt64_LittleEndian(file, zero64);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint64), sizeof(written_uint64), { &chunkCrc, &fileCrc });
 
 		// chunk crc

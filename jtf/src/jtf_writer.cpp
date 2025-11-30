@@ -109,57 +109,57 @@ namespace cybex_interactive::jtf
 
 		// chunk length
 		const uint32_t payloadSize = 32;
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		uint32_t written_uint32 = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_HEAD;
-		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &chunkCrc, &fileCrc });
 
 		// version major
 		const uint8_t versionMajor = JTF_VERSION_MAJOR;
-		uint8_t _uint8_t = WriteUInt8_LittleEndian(file, versionMajor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
+		uint8_t written_uint8 = WriteUInt8_LittleEndian(file, versionMajor);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint8), sizeof(written_uint8), { &chunkCrc, &fileCrc });
 		// version minor
 		const uint8_t versionMinor = JTF_VERSION_MINOR;
-		_uint8_t = WriteUInt8_LittleEndian(file, versionMinor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
+		written_uint8 = WriteUInt8_LittleEndian(file, versionMinor);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint8), sizeof(written_uint8), { &chunkCrc, &fileCrc });
 		// version patch
 		const uint8_t versionPatch = JTF_VERSION_PATCH;
-		_uint8_t = WriteUInt8_LittleEndian(file, versionPatch);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
+		written_uint8 = WriteUInt8_LittleEndian(file, versionPatch);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint8), sizeof(written_uint8), { &chunkCrc, &fileCrc });
 
 		// dimensions
-		uint16_t _uint16_t = WriteUInt16_LittleEndian(file, width);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint16_t), sizeof(_uint16_t), { &chunkCrc, &fileCrc });
-		_uint16_t = WriteUInt16_LittleEndian(file, height);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint16_t), sizeof(_uint16_t), { &chunkCrc, &fileCrc });
+		uint16_t written_uint16 = WriteUInt16_LittleEndian(file, width);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint16), sizeof(written_uint16), { &chunkCrc, &fileCrc });
+		written_uint16 = WriteUInt16_LittleEndian(file, height);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint16), sizeof(written_uint16), { &chunkCrc, &fileCrc });
 
 		// bit depth
-		_uint8_t = WriteUInt8_LittleEndian(file, bitDepth);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
+		written_uint8 = WriteUInt8_LittleEndian(file, bitDepth);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint8), sizeof(written_uint8), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
-		uint64_t _uint64_t = WriteUInt64_LittleEndian(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint64_t), sizeof(_uint64_t), { &chunkCrc, &fileCrc });
+		uint64_t written_uint64 = WriteUInt64_LittleEndian(file, zero64bit);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint64), sizeof(written_uint64), { &chunkCrc, &fileCrc });
 
 		// bounds
-		int32_t _int32_t = WriteInt32_LittleEndian(file, boundsLower);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_int32_t), sizeof(_int32_t), { &chunkCrc, &fileCrc });
-		_int32_t = WriteInt32_LittleEndian(file, boundsUpper);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_int32_t), sizeof(_int32_t), { &chunkCrc, &fileCrc });
+		int32_t written_int32 = WriteInt32_LittleEndian(file, boundsLower);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_int32), sizeof(written_int32), { &chunkCrc, &fileCrc });
+		written_int32 = WriteInt32_LittleEndian(file, boundsUpper);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_int32), sizeof(written_int32), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
-		_uint64_t = WriteUInt64_LittleEndian(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint64_t), sizeof(_uint64_t), { &chunkCrc, &fileCrc });
+		written_uint64 = WriteUInt64_LittleEndian(file, zero64bit);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint64), sizeof(written_uint64), { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 	}
 
 	template<typename T> void JTFFile::WriteHmapChunk(std::ofstream& file, uint8_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc)
@@ -167,15 +167,15 @@ namespace cybex_interactive::jtf
 		// chunk length
 		uint32_t sampleSize = bitDepth / 8;
 		uint32_t payloadSize = static_cast<uint32_t>(heights.size() * sampleSize); // size limit checked in JTFFile::Write
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		uint32_t written_uint32 = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_HMAP;
-		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &chunkCrc, &fileCrc });
 
 		// height data
 		const uint8_t* heightsData = reinterpret_cast<const uint8_t*>(heights.data());
@@ -184,28 +184,28 @@ namespace cybex_interactive::jtf
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 	}
 
 	void JTFFile::WriteFendChunk(std::ofstream& file, Crc32& fileCrc)
 	{
 		// chunk length
 		const uint32_t payloadSize = 0;
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, payloadSize);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		uint32_t written_uint32 = WriteUInt32_LittleEndian(file, payloadSize);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 
 		Crc32 chunkCrc;
 
 		// chunk type
 		constexpr uint32_t chunkTypeName = CHUNK_ID_FEND;
-		_uint32_t = WriteUInt32_LittleEndian(file, chunkTypeName);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, chunkTypeName);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
+		written_uint32 = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &fileCrc });
 	}
 
 	void JTFFile::WriteFileCrc(std::ofstream& file, Crc32& fileCrc)

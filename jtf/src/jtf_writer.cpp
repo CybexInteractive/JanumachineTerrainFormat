@@ -16,34 +16,39 @@ namespace cybex_interactive::jtf
 	}
 
 
-	inline static void WriteInt32_LittleEndian(std::ofstream& file, int32_t value) {
+	inline static int32_t WriteInt32_LittleEndian(std::ofstream& file, int32_t value) {
 		if constexpr (std::endian::native == std::endian::big)
 			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
+		return value;
 	}
 
-	inline static void WriteUInt8_LittleEndian(std::ofstream& file, uint8_t value) {
+	inline static uint8_t WriteUInt8_LittleEndian(std::ofstream& file, uint8_t value) {
 		if constexpr (std::endian::native == std::endian::big)
 			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
+		return value;
 	}
 
-	inline static void WriteUInt16_LittleEndian(std::ofstream& file, uint16_t value) {
+	inline static uint16_t WriteUInt16_LittleEndian(std::ofstream& file, uint16_t value) {
 		if constexpr (std::endian::native == std::endian::big)
 			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
+		return value;
 	}
 
-	inline static void WriteUInt32_LittleEndian(std::ofstream& file, uint32_t value){
+	inline static uint32_t WriteUInt32_LittleEndian(std::ofstream& file, uint32_t value){
 		if constexpr (std::endian::native == std::endian::big)
 			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
+		return value;
 	}
 	
-	inline static void WriteUInt64_LittleEndian(std::ofstream& file, uint64_t value) {
+	inline static uint64_t WriteUInt64_LittleEndian(std::ofstream& file, uint64_t value) {
 		if constexpr (std::endian::native == std::endian::big)
 			value = byteswap(value);
 		file.write(reinterpret_cast<const char*>(&value), sizeof(value));
+		return value;
 	}
 
 
@@ -56,6 +61,7 @@ namespace cybex_interactive::jtf
 		}
 	}
 	
+
 	template<typename T> void JTFFile::Write(const std::string& filePath, uint16_t width, uint16_t height, int32_t boundsLower, int32_t boundsUpper, const std::vector<T>& heights)
 	{
 		// type compatibility check
@@ -117,45 +123,45 @@ namespace cybex_interactive::jtf
 
 		// version major
 		const uint8_t versionMajor = JTF_VERSION_MAJOR;
-		WriteUInt8_LittleEndian(file, versionMajor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMajor), sizeof(versionMajor), { &chunkCrc, &fileCrc });
+		uint8_t _uint8_t = WriteUInt8_LittleEndian(file, versionMajor);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
 		// version minor
 		const uint8_t versionMinor = JTF_VERSION_MINOR;
-		WriteUInt8_LittleEndian(file, versionMinor);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionMinor), sizeof(versionMinor), { &chunkCrc, &fileCrc });
+		_uint8_t = WriteUInt8_LittleEndian(file, versionMinor);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
 		// version patch
 		const uint8_t versionPatch = JTF_VERSION_PATCH;
-		WriteUInt8_LittleEndian(file, versionPatch);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&versionPatch), sizeof(versionPatch), { &chunkCrc, &fileCrc });
+		_uint8_t = WriteUInt8_LittleEndian(file, versionPatch);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
 
 		// dimensions
-		WriteUInt16_LittleEndian(file, width);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&width), sizeof(width), { &chunkCrc, &fileCrc });
-		WriteUInt16_LittleEndian(file, height);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&height), sizeof(height), { &chunkCrc, &fileCrc });
+		uint16_t _uint16_t = WriteUInt16_LittleEndian(file, width);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint16_t), sizeof(_uint16_t), { &chunkCrc, &fileCrc });
+		_uint16_t = WriteUInt16_LittleEndian(file, height);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint16_t), sizeof(_uint16_t), { &chunkCrc, &fileCrc });
 
 		// bit depth
-		WriteUInt8_LittleEndian(file, bitDepth);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&bitDepth), sizeof(bitDepth), { &chunkCrc, &fileCrc });
+		_uint8_t = WriteUInt8_LittleEndian(file, bitDepth);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint8_t), sizeof(_uint8_t), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
-		WriteUInt64_LittleEndian(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { &chunkCrc, &fileCrc });
+		uint64_t _uint64_t = WriteUInt64_LittleEndian(file, zero64bit);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint64_t), sizeof(_uint64_t), { &chunkCrc, &fileCrc });
 
 		// bounds
-		WriteInt32_LittleEndian(file, boundsLower);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsLower), sizeof(boundsLower), { &chunkCrc, &fileCrc });
-		WriteInt32_LittleEndian(file, boundsUpper);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&boundsUpper), sizeof(boundsUpper), { &chunkCrc, &fileCrc });
+		uint32_t _uint32_t = WriteInt32_LittleEndian(file, boundsLower);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
+		_uint32_t = WriteInt32_LittleEndian(file, boundsUpper);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &chunkCrc, &fileCrc });
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
-		WriteUInt64_LittleEndian(file, zero64bit);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&zero64bit), sizeof(zero64bit), { &chunkCrc, &fileCrc });
+		_uint64_t = WriteUInt64_LittleEndian(file, zero64bit);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint64_t), sizeof(_uint64_t), { &chunkCrc, &fileCrc });
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
+		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 
 	template<typename T> void JTFFile::WriteHmapChunk(std::ofstream& file, uint8_t bitDepth, const std::vector<T>& heights, Crc32& fileCrc)
@@ -180,8 +186,8 @@ namespace cybex_interactive::jtf
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
+		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 
 	void JTFFile::WriteFendChunk(std::ofstream& file, Crc32& fileCrc)
@@ -199,9 +205,9 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4, { &chunkCrc, &fileCrc });
 
 		// chunk crc
-		uint32_t crcValue = Crc32::Hash(reinterpret_cast<const uint8_t*>(&chunkTypeName), 4);
-		WriteUInt32_LittleEndian(file, crcValue);
-		AppendToCrc(reinterpret_cast<const uint8_t*>(&crcValue), sizeof(crcValue), { &fileCrc });
+		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
+		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 
 	void JTFFile::WriteFileCrc(std::ofstream& file, Crc32& fileCrc)

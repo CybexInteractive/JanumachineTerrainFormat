@@ -260,6 +260,9 @@ namespace cybex_interactive::jtf
 		if (expectedCrc != computedCrc)
 			throw std::runtime_error(FileReadError(filePath, "HMAP CRC mismatch."));
 
+		if (payloadSize % (jtf.BitDepth / 8) != 0)
+			throw std::runtime_error(FileReadError(filePath, "HMAP payload size does not match bit depth requirement."));
+
 		size_t sampleCount = payloadSize / (jtf.BitDepth / 8);
 		jtf.HeightSamples.resize(sampleCount);
 

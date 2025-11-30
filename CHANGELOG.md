@@ -25,9 +25,11 @@ Work in progress
 - Reader not ensuring little-endianness of height samples.
 - Reader not ensuring little-endianness of CRC values.
 - Reader not ensuring CRC values are addet to file CRC as is in raw file.
+- Inconsistent CRC handling in FEND chunk.
 
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].
+- Writer helper functions return written value so it can consistently be added to CRC as little-endian.
 
 **Deprecated**  
 **Removed**  

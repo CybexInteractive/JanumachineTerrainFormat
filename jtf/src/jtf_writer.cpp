@@ -158,7 +158,7 @@ namespace cybex_interactive::jtf
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 
@@ -184,7 +184,7 @@ namespace cybex_interactive::jtf
 
 		// chunk crc
 		uint32_t crcValue = chunkCrc.GetCurrentHashAsUInt32();
-		uint32_t _uint32_t = WriteUInt32_LittleEndian(file, crcValue);
+		_uint32_t = WriteUInt32_LittleEndian(file, crcValue);
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&_uint32_t), sizeof(_uint32_t), { &fileCrc });
 	}
 

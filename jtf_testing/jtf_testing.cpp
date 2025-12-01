@@ -12,7 +12,7 @@ using namespace std;
 
 static string ResultCompare(JTF_Result expected, JTF_Result result)
 {
-	return expected == result ? "Match" : "Mismatch";
+	return expected == result ? "[OK]" : "[Fail]";
 }
 
 static string PrintResult(JTF_Result result)
@@ -58,13 +58,13 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 
 	// write test
 	JTF_Log writeResult = Write(filePath, width, height, boundsLower, boundsUpper, heights.data(), heights.size());
-	cout << format("Write result:\t\t {} {}", ResultCompare(expectedWriteResult, writeResult.result), PrintResult(writeResult.result)) << endl;
+	cout << format("Write result:\t\t {} {}:\n{}", ResultCompare(expectedWriteResult, writeResult.result), PrintResult(writeResult.result), writeResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
 
 	// read test
 	JTF_Log readResult = Read(filePath, &file);
-	cout << format("Read result:\t\t {} {}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result)) << endl;
+	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
 

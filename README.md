@@ -34,19 +34,19 @@ Compact binary terrain heightmap format for 3D applications and game engines.
 <table>
   <tr>
     <td>Signature</td>
-    <td>Big-endian</td>
+    <td>Big-Endian</td>
   </tr>
   <tr>
     <td>Chunk IDs (Typename)</td>
-    <td>Big-endian</td>
+    <td>Little-Endian</td>
   </tr>
   <tr>
     <td>all integers</td>
-    <td>Little-endian</td>
+    <td>Little-Endian</td>
   </tr>
   <tr>
     <td>float/double samples&emsp;</td>
-    <td>Little-endian&emsp;&emsp;</td>
+    <td>Little-Endian&emsp;&emsp;</td>
   </tr>
 </table>
 

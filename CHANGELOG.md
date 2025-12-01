@@ -1,7 +1,8 @@
 ﻿# 🧾Changelog
 All notable changes to this project will be dosumented in this file.
 
-## 🚧 Unreleased
+<!--
+## 🚧 Unreleased ─ dd-mm-yyyy
 Work in progress
 
 **Added**  
@@ -10,6 +11,32 @@ Work in progress
 **Deprecated**  
 **Removed**  
 **Security**  
+-->
+
+## ⭐ [JTF 1.0.1] Unreleased ─ XX-XX-XXXX
+<!--(https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0)-->
+Work in progress
+
+**Added**  
+**Fixed**  
+- Reader not ensuring correct endianness of HEAD chunk payload.
+- Reader not ensuring little-endianness of height samples.
+- Reader not ensuring little-endianness of CRC values.
+- Reader not ensuring CRC values are addet to file CRC as is in raw file.
+- Writer writing wrong version (copy paste error, writing minor in place of patch version number).
+- Writer not ensuring chunk ids are written as little-endian to file (human readable).
+- Writer not ensuring little-endianness of chunk length and type, including value added to CRC.
+- Writer not ensuring little-endianness of height samples.
+- Writer having inconsistent CRC handling in FEND chunk.
+- Remove unnecessary byteswap in writer helper function WriteUInt8_LittleEndian.
+
+**Changed**  
+- Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].
+- Writer helper functions return written value so it can consistently be added to CRC as little-endian.
+
+**Deprecated**  
+**Removed**  
+**Security** 
 
 ## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.
@@ -17,31 +44,31 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
 **Added**
 - **C++ core library** with reading/writing support.
 - **C API** `jtf_c_api.h` exposing:
-  - `Create()`
-  - `Read()`
-  - `Write()`
-  - `GetVersion()`
-  - `Destroy()`
+  - `Create()`,
+  - `Read()`,
+  - `Write()`,
+  - `GetVersion()`,
+  - `Destroy()`,
   - Return value `JTF_Log`, status reporting structure.
 - **New `JTF_Log` system** providing:
-  - `success` flag  
-  - human-readable error message (stack-allocated, no ownership transfer)  
-  - consistent error handling across read/write operations  
+  - `success` flag,  
+  - human-readable error message (stack-allocated, no ownership transfer),  
+  - consistent error handling across read/write operations.  
 - **File header format** including:
-  - Signature (magic number)
-  - Version (major, minor, patch)
-  - Dimensions (width, height)
-  - Bit depth (sample precision)
-  - Bounds (lower, upper)
+  - Signature (magic number),
+  - Version (major, minor, patch),
+  - Dimensions (width, height),
+  - Bit depth (sample precision),
+  - Bounds (lower, upper).
 - **Versioning system** integrated with CMake:
-  - `PROJECT_VERSION`
-  - auto-generated `jtf_version.h`
-  - DLL/SO/DYLIB version metadata
+  - `PROJECT_VERSION`,
+  - auto-generated `jtf_version.h`,
+  - DLL/SO/DYLIB version metadata.
 - **Binary compatibility guarantees**:
-  - fixed-size header  
-  - defined endianness  
-  - stable magic number  
-  - clearly versioned layout
+  - fixed-size header,  
+  - defined endianness,  
+  - stable magic number,  
+  - clearly versioned layout.
 - Very basic **unit test** for native functionality.
 
 **Fixed**
@@ -52,9 +79,9 @@ Initial stable release of **JTF ─ Janumachine Terrain Format**.
 - Refactored `sampleCount` from `uint64_t` to `uint32_t` (max 4097 × 4097 fits safely).
 - Simplified the internal `JTF` struct (no `std::vector<double>` in the C interface).
 - Updated serialization code for:
-  - correct ordering of metadata  
-  - deterministic header layout  
-  - stable cross-platform binary representation
+  - correct ordering of metadata,  
+  - deterministic header layout,  
+  - stable cross-platform binary representation.
 - Reworked error propagation (exceptions in C++ → structured logs in C).
 - Unified version definition location (`jtf_version.h.in` → generated header).
 - Cleaned up include structure and removed redundant declarations.

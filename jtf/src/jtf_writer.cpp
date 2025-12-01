@@ -88,14 +88,14 @@ namespace cybex_interactive::jtf
 
 		Crc32 fileCrc;
 
-		WriteSignature(file, fileCrc);
+		WriteSignature(file);
 		WriteHeadChunk(file, width, height, bitDepth, boundsLower, boundsUpper, fileCrc);
 		WriteHmapChunk(file, bitDepth, heights, fileCrc);
 		WriteFendChunk(file, fileCrc);
 		WriteFileCrc(file, fileCrc);
 	}
 
-	void JTFFile::WriteSignature(std::ofstream& file, Crc32& fileCrc)
+	void JTFFile::WriteSignature(std::ofstream& file)
 	{
 		uint8_t signatureBE[8];
 		UInt64_BigEndian(JTF_SIGNATURE, signatureBE);
@@ -175,13 +175,12 @@ namespace cybex_interactive::jtf
 		AppendToCrc(reinterpret_cast<const uint8_t*>(&written_uint32), sizeof(written_uint32), { &chunkCrc });
 
 		// height data
-		if (std::endian::native == std::endian::big)
+		if constexpr (std::endian::native == std::endian::big)
 		{
 			std::vector<uint8_t> encoded(payloadSize);
 
 			if (bitDepth == 32)
 			{
-				uint32_t* out = reinterpret_cast<uint32_t*>(encoded.data());
 				for (size_t i = 0; i < heights.size(); ++i)
 				{
 					uint32_t value;
@@ -192,7 +191,6 @@ namespace cybex_interactive::jtf
 			}
 			else
 			{
-				uint64_t* out = reinterpret_cast<uint64_t*>(encoded.data());
 				for (size_t i = 0; i < heights.size(); ++i)
 				{
 					uint64_t value;

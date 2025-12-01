@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <bit>
+#include <unordered_map>
 
 namespace cybex_interactive::jtf
 {
@@ -43,6 +44,13 @@ namespace cybex_interactive::jtf
 		return std::string(name);
 	}
 
+	//constexpr std::unordered_map<std::string, uint32_t> RequestableChunkNames = {
+	//	{"HEAD", CHUNK_ID_HEAD},
+	//	{"HMAP", CHUNK_ID_HMAP},
+
+	//	{"FEND", CHUNK_ID_FEND}
+	//};
+
 
 	class JTFFile
 	{
@@ -61,11 +69,18 @@ namespace cybex_interactive::jtf
 		/// <returns>Returns JTF data struct.</returns>
 		static JTF Read(const std::string& filePath);
 
+		///// <summary>Read specified data from .jtf file.</summary>
+		///// <param name="path">File path.</param>
+		///// <param name="requestedChunks">Requested chunk names. "HEAD", "HMAP", etc.</param>
+		///// <param name="verifyFileCrc">Read all chunk CRCs to verify file CRC.</param>
+		///// <returns>Returns JTF data struct with selectively populated chunks.</returns>
+		//static JTF Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc);
+
 	private:
 		/// <summary>Write the JTF signature (magic number).</summary>
 		/// <param name="file">File</param>
 		/// <param name="fileCrc">Computing file CRC reference.</param>
-		inline static void WriteSignature(std::ofstream& file, Crc32& fileCrc);
+		inline static void WriteSignature(std::ofstream& file);
 
 		/// <summary>Write the header chunk 'HEAD'.</summary>
 		/// <param name="file">File</param>

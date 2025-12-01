@@ -83,22 +83,22 @@ extern "C"
 
 			cybex_interactive::jtf::JTF jtf = cybex_interactive::jtf::JTFFile::Read(filePath);
 
-			data->VersionMajor = jtf.VersionMajor;
-			data->VersionMinor = jtf.VersionMinor;
-			data->VersionPatch = jtf.VersionPatch;
-			data->Width = jtf.Width;
-			data->Height = jtf.Height;
-			data->BitDepth = jtf.BitDepth;
-			data->BoundsLower = jtf.BoundsLower;
-			data->BoundsUpper = jtf.BoundsUpper;
+			data->VersionMajor = jtf.Header.VersionMajor;
+			data->VersionMinor = jtf.Header.VersionMinor;
+			data->VersionPatch = jtf.Header.VersionPatch;
+			data->Width = jtf.Header.Width;
+			data->Height = jtf.Header.Height;
+			data->BitDepth = jtf.Header.BitDepth;
+			data->BoundsLower = jtf.Header.BoundsLower;
+			data->BoundsUpper = jtf.Header.BoundsUpper;
 
-			uint32_t heightSampleCount = static_cast<uint32_t>(jtf.HeightSamples.size());
+			uint32_t heightSampleCount = static_cast<uint32_t>(jtf.Heights.HeightSamples.size());
 			data->HeightSampleCount = heightSampleCount;
 
 			if (heightSampleCount > 0)
 			{
 				data->HeightSamples = new double[heightSampleCount];
-				memcpy(data->HeightSamples, jtf.HeightSamples.data(), heightSampleCount * sizeof(double));
+				memcpy(data->HeightSamples, jtf.Heights.HeightSamples.data(), heightSampleCount * sizeof(double));
 			}
 			else data->HeightSamples = nullptr;
 

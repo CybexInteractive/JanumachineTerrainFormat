@@ -175,6 +175,12 @@ namespace cybex_interactive::jtf
 		return jtf;
 	}
 
+	//JTF JTFFile::Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc)
+	//{
+
+	//}
+
+
 	void JTFFile::ReadHeadChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc, JTF& jtf)
 	{
 		if (payloadSize != 32)

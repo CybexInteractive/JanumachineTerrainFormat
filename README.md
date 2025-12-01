@@ -72,7 +72,14 @@ All CRCs are **CRC-32 IEEE**.
 | CRC | Covers |
 | :--- | :--- |
 | Chunk CRC | Chunk type & payload |
-| File CRC | Entire file up to and including FEND CRC |
+| File CRC | Chunk CRCs including FEND CRC |
+
+The file CRC encapsulates chunk CRCs only, this makes it:
+- fast to compute / verify,
+- allows chunk skipping / selective reading whilst crc verifying read,
+- allows streaming read.
+
+The file CRC does **not** include: the signature, itself, any chunk payloads, any chunk lengths, any chunk types.
 
 ## 🚨 File Invalid Conditions
 A loader **must reject** the file if **any** of the following conditions is true:
@@ -83,7 +90,7 @@ A loader **must reject** the file if **any** of the following conditions is true
 - BitDepth **not** <code><span style="color: #abc8a8;">32</span></code> or <code><span style="color: #abc8a8;">64</span></code>
 - Non-zero reserved bytes
 
-### ⌛ Future Extension Plan (v2.0+)
+### ⌛ Future Extension Plans
 Reserved header bytes are/may be intended for:
 - Compression flag
 - Streaming support

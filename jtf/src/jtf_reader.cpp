@@ -136,7 +136,6 @@ namespace cybex_interactive::jtf
 		ReadToBuffer(filePath, file, signature, 8/*sizeof(signature)*/);
 		if (!VerifySignature(signature))
 			throw std::runtime_error(FileReadError(filePath, "Invalid file signature."));
-		AppendToCrc(signature, sizeof(signature), { &fileCrc });
 
 		// read chunks
 		bool fendReached = false;
@@ -145,7 +144,6 @@ namespace cybex_interactive::jtf
 			// read chunk length
 			uint8_t payloadSizeBytes[4];
 			ReadToBuffer(filePath, file, &payloadSizeBytes, sizeof(payloadSizeBytes));
-			AppendToCrc(payloadSizeBytes, sizeof(payloadSizeBytes), { &fileCrc });
 			uint32_t payloadSize = ReadUInt32_LittleEndian(payloadSizeBytes);
 
 			// read chunk type
@@ -188,8 +186,8 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'H','E','A','D' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
-		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
+		AppendToCrc(payload.data(), payloadSize, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];
@@ -243,11 +241,11 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'H','M','A','P' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
 
 		std::vector<uint8_t> payload(payloadSize);
 		ReadToBuffer(filePath, file, payload.data(), payloadSize);
-		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
+		AppendToCrc(payload.data(), payloadSize, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];
@@ -293,7 +291,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'F','E','N','D' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];

@@ -19,6 +19,17 @@ Work in progress
 **Added**  
 **Fixed**  
 **Changed**  
+- File CRC calculation to encapsulate chunk CRCs only:
+    - fast to compute / verify,
+    - allows chunk skipping / selective reading whilst crc verifying read,
+    - allows streaming read,
+    - file CRC does **not** include:
+        - signature,
+        - self,
+        - chunk payloads,
+        - chunk lengths
+        - chunk types.
+
 **Deprecated**  
 **Removed**  
 **Security**  
@@ -42,7 +53,7 @@ Fix little-endianness, versioning, and minor optimization.
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].
 - Writer helper functions return written value so it can consistently be added to CRC as little-endian.
 
-## [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
+## 🗃️ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.
 
 **Added**

@@ -31,6 +31,7 @@ Work in progress
         - chunk payloads,
         - chunk lengths
         - chunk types.
+- Layout of JTF struct, saparating header and heights data into separate structs.
 
 **Deprecated**  
 **Removed**  

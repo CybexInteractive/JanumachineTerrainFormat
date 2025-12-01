@@ -204,32 +204,32 @@ namespace cybex_interactive::jtf
 		size_t offset = 0;
 
 		// version major
-		jtf.VersionMajor = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionMajor = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 		// version minor
-		jtf.VersionMinor = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionMinor = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 		// version patch
-		jtf.VersionPatch = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionPatch = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 
 		// dimensions
-		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
+		jtf.Header.Width = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
-		jtf.Height = ReadUInt16_LittleEndian(payload.data() + offset);
+		jtf.Header.Height = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
 
 		// bit depth
-		jtf.BitDepth = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.BitDepth = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
 		offset += 8;
 
 		// bounds
-		jtf.BoundsLower = ReadInt32_LittleEndian(payload.data() + offset);
+		jtf.Header.BoundsLower = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
-		jtf.BoundsUpper = ReadInt32_LittleEndian(payload.data() + offset);
+		jtf.Header.BoundsUpper = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
@@ -258,29 +258,29 @@ namespace cybex_interactive::jtf
 		if (expectedCrc != computedCrc)
 			throw std::runtime_error(FileReadError(filePath, "HMAP CRC mismatch."));
 
-		if (payloadSize % (jtf.BitDepth / 8) != 0)
+		if (payloadSize % (jtf.Header.BitDepth / 8) != 0)
 			throw std::runtime_error(FileReadError(filePath, "HMAP payload size does not match bit depth requirement."));
 
-		size_t sampleCount = payloadSize / (jtf.BitDepth / 8);
-		jtf.HeightSamples.resize(sampleCount);
+		size_t sampleCount = payloadSize / (jtf.Header.BitDepth / 8);
+		jtf.Heights.HeightSamples.resize(sampleCount);
 
-		if (jtf.BitDepth == 32)
+		if (jtf.Header.BitDepth == 32)
 		{
 			for (size_t i = 0; i < sampleCount; ++i)
 			{
 				const uint8_t* pointer = payload.data() + i * 4;
-				jtf.HeightSamples[i] = static_cast<double>(ReadFloat_LittleEndian(pointer));
+				jtf.Heights.HeightSamples[i] = static_cast<double>(ReadFloat_LittleEndian(pointer));
 			}
 		}
-		else if (jtf.BitDepth == 64)
+		else if (jtf.Header.BitDepth == 64)
 		{
 			for (size_t i = 0; i < sampleCount; ++i)
 			{
 				const uint8_t* pointer = payload.data() + i * 8;
-				jtf.HeightSamples[i] = ReadDouble_LittleEndian(pointer);
+				jtf.Heights.HeightSamples[i] = ReadDouble_LittleEndian(pointer);
 			}
 		}
-		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.BitDepth)));
+		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.Header.BitDepth)));
 	}
 
 	void JTFFile::ReadFendChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc)

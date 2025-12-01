@@ -184,10 +184,10 @@ namespace cybex_interactive::jtf
 				uint32_t* out = reinterpret_cast<uint32_t*>(encoded.data());
 				for (size_t i = 0; i < heights.size(); ++i)
 				{
-					uint32_t v;
-					std::memcpy(&v, &heights[i], 4);
-					v = byteswap(v);
-					out[i] = v;
+					uint32_t value;
+					std::memcpy(&value, &heights[i], 4);
+					value = byteswap(value);
+					std::memcpy(encoded.data() + i * 4, &value, 4);
 				}
 			}
 			else
@@ -195,10 +195,10 @@ namespace cybex_interactive::jtf
 				uint64_t* out = reinterpret_cast<uint64_t*>(encoded.data());
 				for (size_t i = 0; i < heights.size(); ++i)
 				{
-					uint64_t v;
-					std::memcpy(&v, &heights[i], 8);
-					v = byteswap(v);
-					out[i] = v;
+					uint64_t value;
+					std::memcpy(&value, &heights[i], 8);
+					value = byteswap(value);
+					std::memcpy(encoded.data() + i * 8, &value, 8);
 				}
 			}
 

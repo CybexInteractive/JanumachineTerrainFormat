@@ -18,6 +18,8 @@ Work in progress
 
 **Added**  
 **Fixed**  
+- Potentially UB (undefined behaviour) in writing height samples.
+
 **Changed**  
 - File CRC calculation to encapsulate chunk CRCs only:
     - fast to compute / verify,

@@ -13,11 +13,8 @@ Work in progress
 **Security**  
 -->
 
-## ⭐ [JTF 1.0.1] Unreleased ─ XX-XX-XXXX
-<!--(https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0)-->
-Work in progress
+## ⭐ [JTF 1.0.1](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.1) ─ 01-12-2025
 
-**Added**  
 **Fixed**  
 - Reader not ensuring correct endianness of HEAD chunk payload.
 - Reader not ensuring little-endianness of height samples.
@@ -33,10 +30,6 @@ Work in progress
 **Changed**  
 - Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].
 - Writer helper functions return written value so it can consistently be added to CRC as little-endian.
-
-**Deprecated**  
-**Removed**  
-**Security** 
 
 ## ⭐ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.

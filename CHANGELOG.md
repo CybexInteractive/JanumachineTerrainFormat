@@ -27,6 +27,7 @@ Work in progress
 - `RequestableChunkNames` compile time array.
 - `GetRequestableChunkNamesMap()` map builder.
 - `LookupChunkID()` function.
+- Additional `payloadSize` check when rading HMAP, comparing `payloadSIze` with `width * height`.
 
 **Fixed**  
 - Potentially UB (undefined behaviour) in writing height samples.

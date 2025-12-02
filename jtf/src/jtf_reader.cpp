@@ -388,6 +388,8 @@ namespace cybex_interactive::jtf
 
 		if (payloadSize % (jtf.Header.BitDepth / 8) != 0)
 			throw std::runtime_error(FileReadError(filePath, "HMAP payload size does not match bit depth requirement."));
+		if (payloadSize % (jtf.Header.Width * jtf.Header.Height) != 0)
+			throw std::runtime_error(FileReadError(filePath, "HMAP payload size does not match (width * height) requirement."));
 
 		size_t sampleCount = payloadSize / (jtf.Header.BitDepth / 8);
 		jtf.Heights.HeightSamples.resize(sampleCount);

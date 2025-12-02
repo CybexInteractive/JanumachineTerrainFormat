@@ -13,8 +13,7 @@ Work in progress
 **Security**  
 -->
 
-## 🚧 [JTF 1.1.0] Unreleased ─ dd-mm-yyyy
-Work in progress
+## ⭐ [JTF 1.1.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.1.0) ─ 02-12-2025
 
 **Added**  
 - **C_API** `ReadRequested()` function to read chunks selectively:
@@ -50,7 +49,7 @@ Work in progress
 **Removed**  
 **Security**  
 
-## ⭐ [JTF 1.0.1](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.1) ─ 01-12-2025
+## 🗃️ [JTF 1.0.1](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.1) ─ 01-12-2025
 Fix little-endianness, versioning, and minor optimization.
 
 **Fixed**  

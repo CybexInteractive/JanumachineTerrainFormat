@@ -17,21 +17,33 @@ Work in progress
 Work in progress
 
 **Added**  
+- **C_API** `ReadRequested()` function to read chunks selectively:
+    - always reads "HEAD" chunk, holding relevant flags for reading process,
+    - no case sensitivity because of native `::toupper` conversion,
+    - `bool` flag for skipping file CRC verification.
+- `ReadChunks()` selective file chunk readout:
+    - requestable by chunk type as string,
+    - optional file level `CRC` verification.
+- `RequestableChunkNames` compile time array.
+- `GetRequestableChunkNamesMap()` map builder.
+- `LookupChunkID()` function.
+
 **Fixed**  
 - Potentially UB (undefined behaviour) in writing height samples.
 
 **Changed**  
-- File CRC calculation to encapsulate chunk CRCs only:
+- File `CRC` calculation to encapsulate chunk `CRC`s only:
     - fast to compute / verify,
-    - allows chunk skipping / selective reading whilst crc verifying read,
+    - allows chunk skipping / selective reading whilst `CRC` verifying read,
     - allows streaming read,
-    - file CRC does **not** include:
-        - signature,
+    - file `CRC` does **not** include:
+        - `Signature`,
         - self,
         - chunk payloads,
         - chunk lengths
         - chunk types.
-- Layout of JTF struct, saparating header and heights data into separate structs.
+- Layout of `JTF` struct, saparating `Header` and `Heights` data into separate structs.
+- Extracted `ReadValidateSignature()`function.
 
 **Deprecated**  
 **Removed**  
@@ -41,20 +53,20 @@ Work in progress
 Fix little-endianness, versioning, and minor optimization.
 
 **Fixed**  
-- Reader not ensuring correct endianness of HEAD chunk payload.
-- Reader not ensuring little-endianness of height samples.
-- Reader not ensuring little-endianness of CRC values.
-- Reader not ensuring CRC values are addet to file CRC as is in raw file.
-- Writer writing wrong version (copy paste error, writing minor in place of patch version number).
-- Writer not ensuring chunk ids are written as little-endian to file (human readable).
-- Writer not ensuring little-endianness of chunk length and type, including value added to CRC.
-- Writer not ensuring little-endianness of height samples.
-- Writer having inconsistent CRC handling in FEND chunk.
-- Remove unnecessary byteswap in writer helper function WriteUInt8_LittleEndian.
+- **Reader** not ensuring correct endianness of `HEAD` chunk payload.
+- **Reader** not ensuring little-endianness of height samples.
+- **Reader** not ensuring little-endianness of `CRC` values.
+- **Reader** not ensuring `CRC` values are addet to file `CRC` as is in raw file.
+- **Writer** writing wrong version (copy paste error, writing `Minor` in place of `Patch` version number).
+- **Writer** not ensuring chunk ids are written as little-endian to file (human readable).
+- **Writer** not ensuring little-endianness of chunk length and type, including value added to `CRC`.
+- **Writer** not ensuring little-endianness of height samples.
+- **Writer** having inconsistent `CRC` handling in `FEND` chunk.
+- Remove unnecessary `byteswap` in writer helper function `WriteUInt8_LittleEndian()`.
 
 **Changed**  
-- Log string in jtf_reader.cpp function FileReadError from [JTF Import Error] to [JTF Read Error].
-- Writer helper functions return written value so it can consistently be added to CRC as little-endian.
+- `Log` string in `jtf_reader.cpp` function `FileReadError` from `[JTF Import Error]` to `[JTF Read Error]`.
+- **Writer** helper functions return written value so it can consistently be added to `CRC` as little-endian.
 
 ## 🗃️ [JTF 1.0.0](https://github.com/CybexInteractive/JanumachineTerrainFormat/releases/tag/v1.0.0) ─ 15-11-2025
 Initial stable release of **JTF ─ Janumachine Terrain Format**.

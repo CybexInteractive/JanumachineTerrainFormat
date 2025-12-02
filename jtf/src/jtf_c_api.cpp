@@ -116,6 +116,50 @@ extern "C"
 		}
 	}
 
+	JTF_API JTF_Log ReadRequested(const char* filePath, const std::vector<std::string> requestedChunks, bool verifyFileCrc, JTF** out_data)
+	{
+		if (!filePath) return BuildLog(JTF_INVALID_ARGUMENT, "[JTF Read Error] Missing file path. File could not be read.\n");
+		if (!out_data) return BuildLog(JTF_INVALID_ARGUMENT, "[JTF Read Error] Missing out parameter. File could not be read.\n");
+
+		try
+		{
+			std::unique_ptr<JTF> data(new JTF());
+
+			cybex_interactive::jtf::JTF jtf = cybex_interactive::jtf::JTFFile::Read(filePath, requestedChunks, verifyFileCrc);
+
+			data->VersionMajor = jtf.Header.VersionMajor;
+			data->VersionMinor = jtf.Header.VersionMinor;
+			data->VersionPatch = jtf.Header.VersionPatch;
+			data->Width = jtf.Header.Width;
+			data->Height = jtf.Header.Height;
+			data->BitDepth = jtf.Header.BitDepth;
+			data->BoundsLower = jtf.Header.BoundsLower;
+			data->BoundsUpper = jtf.Header.BoundsUpper;
+
+			uint32_t heightSampleCount = static_cast<uint32_t>(jtf.Heights.HeightSamples.size());
+			data->HeightSampleCount = heightSampleCount;
+
+			if (heightSampleCount > 0)
+			{
+				data->HeightSamples = new double[heightSampleCount];
+				memcpy(data->HeightSamples, jtf.Heights.HeightSamples.data(), heightSampleCount * sizeof(double));
+			}
+			else data->HeightSamples = nullptr;
+
+			*out_data = data.release();
+
+			return BuildLog(JTF_SUCCESS, std::format("[JTF Read] Read JTF successfully from '{}'.", filePath).c_str());
+		}
+		catch (const std::exception& e)
+		{
+			return BuildLog(JTF_EXCEPTION, e.what());
+		}
+		catch (...)
+		{
+			return BuildLog(JTF_EXCEPTION, "[JTF Read Error] Unknown native exception during read. File could not be read.");
+		}
+	}
+
 	JTF_API const char* GetVersion(void)
 	{
 		static thread_local std::string buffer = std::format("v{}.{}.{}", JTF_VERSION_MAJOR, JTF_VERSION_MINOR, JTF_VERSION_PATCH);

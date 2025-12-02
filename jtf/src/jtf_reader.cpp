@@ -7,6 +7,8 @@
 #include <cstring>
 #include <cstdint>
 #include <format>
+#include <optional>
+#include <algorithm>
 
 namespace cybex_interactive::jtf
 {
@@ -120,6 +122,36 @@ namespace cybex_interactive::jtf
 	}
 
 
+	static const std::unordered_map<std::string, uint32_t>& GetRequestableChunkNamesMap()
+	{
+		static const std::unordered_map<std::string, uint32_t> map = []()
+			{
+				std::unordered_map<std::string, uint32_t> m;
+				for (const RequestableChunkName& entry : RequestableChunkNames)
+					m.emplace(std::string(entry.name), entry.id);
+				return m;
+			}();
+		return map;
+	}
+
+	std::optional<uint32_t> LookupChunkID(std::string_view name)
+	{
+		// convert to uppercase
+		std::string key{ name };
+		std::transform(key.begin(), key.end(), key.begin(),
+			[](unsigned char c) -> char
+			{
+				return static_cast<char>(std::toupper(c));
+			});
+
+		const std::unordered_map<std::string, uint32_t>& map = GetRequestableChunkNamesMap();
+		std::unordered_map<std::string, uint32_t>::const_iterator iterator = map.find(std::string(key));
+		if (iterator != map.end())
+			return iterator->second;
+		return std::nullopt;
+	}
+
+
 	JTF JTFFile::Read(const std::string& filePath)
 	{
 		JTF jtf;
@@ -129,15 +161,10 @@ namespace cybex_interactive::jtf
 		if (!file)
 			throw std::runtime_error(FileReadError(filePath, "Cannot open file for reading."));
 
-		Crc32 fileCrc;
-
-		// read and verify signature
-		uint8_t signature[8];
-		ReadToBuffer(filePath, file, signature, 8/*sizeof(signature)*/);
-		if (!VerifySignature(signature))
-			throw std::runtime_error(FileReadError(filePath, "Invalid file signature."));
+		ReadValidateSignature(filePath, file);
 
 		// read chunks
+		Crc32 fileCrc;
 		bool fendReached = false;
 		while (file && !fendReached)
 		{
@@ -175,11 +202,106 @@ namespace cybex_interactive::jtf
 		return jtf;
 	}
 
-	//JTF JTFFile::Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc)
-	//{
+	JTF JTFFile::Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc)
+	{
+		JTF jtf;
 
-	//}
+		// file existance check
+		std::ifstream file(filePath, std::ios::binary);
+		if (!file)
+			throw std::runtime_error(FileReadError(filePath, "Cannot open file for reading."));
 
+		// analyze requested chunks
+		std::vector<uint32_t> requestedChunkIds;
+		requestedChunkIds.reserve(requestedChunks.size());
+		// we always need the header, holding relevant flags
+		requestedChunkIds.push_back(CHUNK_ID_HEAD);
+		for (auto& name : requestedChunks)
+		{
+			std::optional<uint32_t> id = LookupChunkID(name);
+			if (!id)
+				throw std::runtime_error(FileReadError(filePath, std::format("Requested unsupported chunk name '{}'. Allowed names are: HEAD, HMAP, FEND.", name)));
+			if (*id == CHUNK_ID_HEAD)
+				continue;
+			requestedChunkIds.push_back(*id);
+		}
+
+		ReadValidateSignature(filePath, file);
+
+		// read chunks
+		Crc32 fileCrc;
+		bool fendReached = false;
+		size_t chunksRemaining = requestedChunkIds.size();
+		while (file && !fendReached)
+		{
+			// read chunk length
+			uint8_t payloadSizeBytes[4];
+			ReadToBuffer(filePath, file, &payloadSizeBytes, sizeof(payloadSizeBytes));
+			uint32_t payloadSize = ReadUInt32_LittleEndian(payloadSizeBytes);
+
+			// read chunk type
+			uint32_t chunkType = ReadChunkType(filePath, file);
+
+			// dispatch
+			bool requested = std::find(requestedChunkIds.begin(), requestedChunkIds.end(), chunkType) != requestedChunkIds.end();
+			if (requested)
+			{
+				switch (chunkType)
+				{
+					case CHUNK_ID_HEAD:
+						ReadHeadChunk(filePath, file, payloadSize, fileCrc, jtf);
+						break;
+
+					case CHUNK_ID_HMAP:
+						ReadHmapChunk(filePath, file, payloadSize, fileCrc, jtf);
+						break;
+
+					case CHUNK_ID_FEND:
+						ReadFendChunk(filePath, file, payloadSize, fileCrc);
+						fendReached = true;
+						break;
+
+					default:
+						throw std::runtime_error(FileReadError(filePath, std::format("Unknown chunk type '{}'.", DecodeChunkID(chunkType))));
+				}
+
+				chunksRemaining--;
+
+				// if not verifying file CRC break out early
+				if (chunksRemaining == 0 && !verifyFileCrc) break;
+			}
+			else
+			{
+				// skip payload
+				if (payloadSize > 0)
+				{
+					file.seekg(static_cast<std::streamoff>(payloadSize), std::ios::cur);
+					if (!file)
+						throw std::runtime_error(FileReadError(filePath, "Unexpected EOF while skipping payload."));
+				}
+
+				// read expected chunk crc
+				uint8_t expectedCrcBytes[4];
+				ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+				AppendToCrc(expectedCrcBytes, sizeof(expectedCrcBytes), { &fileCrc });
+
+				if (chunkType == CHUNK_ID_FEND) fendReached = true;
+			}
+		}
+
+		if (verifyFileCrc) ReadFileCrc(filePath, file, fileCrc);
+
+		return jtf;
+	}
+
+	void JTFFile::ReadValidateSignature(const std::string& filePath, std::ifstream& file)
+	{
+		// read and verify signature
+		uint8_t signature[8];
+		ReadToBuffer(filePath, file, signature, 8/*sizeof(signature)*/);
+		if (!VerifySignature(signature))
+			throw std::runtime_error(FileReadError(filePath, "Invalid file signature."));
+	}
 
 	void JTFFile::ReadHeadChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc, JTF& jtf)
 	{

@@ -62,9 +62,27 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 	file = nullptr;
 	Destroy(file);
 
-	// read test
+	// read test full
 	JTF_Log readResult = Read(filePath, &file);
 	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
+	file = nullptr;
+	Destroy(file);
+
+	// read test header
+	readResult = ReadRequested(filePath, { "HEAD" }, true, &file);
+	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
+	file = nullptr;
+	Destroy(file);
+
+	// read test heights (spelled wrong), no file crc verification
+	readResult = ReadRequested(filePath, { "Hmap" }, false, &file);
+	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
+	file = nullptr;
+	Destroy(file);
+
+	// read test heights (spelled wrong), no file crc verification
+	readResult = ReadRequested(filePath, { "FIZZ" }, false, &file);
+	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(JTF_EXCEPTION, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
 

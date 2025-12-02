@@ -32,6 +32,12 @@ extern "C" {
 		char message[JTF_LOG_MESSAGE_LIMIT];
 	};
 
+	struct JTF_ChunkRequests
+	{
+		const char** items;
+		uint32_t count;
+	};
+
 	/// <summary>Opaque handle representing an in memory JTF file.</summary>
 	struct JTF;
 
@@ -57,7 +63,7 @@ extern "C" {
 	/// <param name="verifyFileCrc">Read all chunk CRCs to verify file CRC.</param>
 	/// <param name="out_data">Pointer to new JTF handle.</param>
 	/// <returns>JTF_Log information.</returns>
-	JTF_API JTF_Log ReadRequested(const char* filePath, const std::vector<std::string> requestedChunks, bool verifyFileCrc, JTF** out_data);
+	JTF_API JTF_Log ReadRequested(const char* filePath, JTF_ChunkRequests requestedChunks, bool verifyFileCrc, JTF** out_data);
 
 	/// <summary>Destroy a JTF file handle and free memory.</summary>
 	JTF_API void Destroy(JTF* file);

@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <bit>
+#include <unordered_map>
 
 namespace cybex_interactive::jtf
 {
@@ -29,7 +30,16 @@ namespace cybex_interactive::jtf
 
 	constexpr uint32_t CHUNK_ID_HEAD = BuildChunkID_LittleEndian('H','E','A','D');
 	constexpr uint32_t CHUNK_ID_HMAP = BuildChunkID_LittleEndian('H','M','A','P');
+
 	constexpr uint32_t CHUNK_ID_FEND = BuildChunkID_LittleEndian('F','E','N','D');
+
+	struct RequestableChunkName { std::string_view name; uint32_t id; };
+	constexpr RequestableChunkName RequestableChunkNames[] = {
+		{"HEAD", CHUNK_ID_HEAD},
+		{"HMAP", CHUNK_ID_HMAP},
+
+		{"FEND", CHUNK_ID_FEND}
+	};
 
 	constexpr inline std::string DecodeChunkID(uint32_t chunkID) noexcept
 	{
@@ -61,11 +71,17 @@ namespace cybex_interactive::jtf
 		/// <returns>Returns JTF data struct.</returns>
 		static JTF Read(const std::string& filePath);
 
+		/// <summary>Read specified data from .jtf file. "HEAD", holding relevant flags, will always be read.</summary>
+		/// <param name="path">File path.</param>
+		/// <param name="requestedChunks">Requested chunk names. "HEAD", "HMAP", etc.</param>
+		/// <param name="verifyFileCrc">Read all chunk CRCs to verify file CRC.</param>
+		/// <returns>Returns JTF data struct with selectively populated chunks.</returns>
+		static JTF Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc);
+
 	private:
 		/// <summary>Write the JTF signature (magic number).</summary>
 		/// <param name="file">File</param>
-		/// <param name="fileCrc">Computing file CRC reference.</param>
-		inline static void WriteSignature(std::ofstream& file, Crc32& fileCrc);
+		inline static void WriteSignature(std::ofstream& file);
 
 		/// <summary>Write the header chunk 'HEAD'.</summary>
 		/// <param name="file">File</param>
@@ -93,6 +109,11 @@ namespace cybex_interactive::jtf
 		/// <param name="fileCrc">Computing file CRC reference.</param>
 		inline static void WriteFileCrc(std::ofstream& file, Crc32& fileCrc);
 
+
+		/// <summary>Read and validate the JTF signature (magic number).</summary>
+		/// <param name="filePath">File path</param>
+		/// <param name="file">File</param>
+		inline static void ReadValidateSignature(const std::string& filePath, std::ifstream& file);
 
 		/// <summary>Read the chunk type ASCII.</summary>
 		/// <param name="filePath">File path (for exception log purpose).</param>

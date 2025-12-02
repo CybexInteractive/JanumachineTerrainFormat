@@ -9,7 +9,7 @@
 
 namespace cybex_interactive::jtf
 {
-	struct JTF
+	struct JTF_Head
 	{
 		uint8_t VersionMajor = 0;
 		uint8_t VersionMinor = 0;
@@ -23,7 +23,16 @@ namespace cybex_interactive::jtf
 		int32_t BoundsLower = 0;
 		int32_t BoundsUpper = 0;
 		int32_t BoundsRange() const { return BoundsUpper - BoundsLower; }
+	};
 
+	struct JTF_Heights
+	{
 		std::vector<double> HeightSamples;
+	};
+
+	struct JTF
+	{
+		JTF_Head Header;
+		JTF_Heights Heights;
 	};
 }

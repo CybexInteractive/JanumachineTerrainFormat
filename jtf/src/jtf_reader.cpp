@@ -7,6 +7,8 @@
 #include <cstring>
 #include <cstdint>
 #include <format>
+#include <optional>
+#include <algorithm>
 
 namespace cybex_interactive::jtf
 {
@@ -120,6 +122,36 @@ namespace cybex_interactive::jtf
 	}
 
 
+	static const std::unordered_map<std::string, uint32_t>& GetRequestableChunkNamesMap()
+	{
+		static const std::unordered_map<std::string, uint32_t> map = []()
+			{
+				std::unordered_map<std::string, uint32_t> m;
+				for (const RequestableChunkName& entry : RequestableChunkNames)
+					m.emplace(std::string(entry.name), entry.id);
+				return m;
+			}();
+		return map;
+	}
+
+	std::optional<uint32_t> LookupChunkID(std::string_view name)
+	{
+		// convert to uppercase
+		std::string key{ name };
+		std::transform(key.begin(), key.end(), key.begin(),
+			[](unsigned char c) -> char
+			{
+				return static_cast<char>(std::toupper(c));
+			});
+
+		const std::unordered_map<std::string, uint32_t>& map = GetRequestableChunkNamesMap();
+		std::unordered_map<std::string, uint32_t>::const_iterator iterator = map.find(std::string(key));
+		if (iterator != map.end())
+			return iterator->second;
+		return std::nullopt;
+	}
+
+
 	JTF JTFFile::Read(const std::string& filePath)
 	{
 		JTF jtf;
@@ -129,23 +161,16 @@ namespace cybex_interactive::jtf
 		if (!file)
 			throw std::runtime_error(FileReadError(filePath, "Cannot open file for reading."));
 
-		Crc32 fileCrc;
-
-		// read and verify signature
-		uint8_t signature[8];
-		ReadToBuffer(filePath, file, signature, 8/*sizeof(signature)*/);
-		if (!VerifySignature(signature))
-			throw std::runtime_error(FileReadError(filePath, "Invalid file signature."));
-		AppendToCrc(signature, sizeof(signature), { &fileCrc });
+		ReadValidateSignature(filePath, file);
 
 		// read chunks
+		Crc32 fileCrc;
 		bool fendReached = false;
 		while (file && !fendReached)
 		{
 			// read chunk length
 			uint8_t payloadSizeBytes[4];
 			ReadToBuffer(filePath, file, &payloadSizeBytes, sizeof(payloadSizeBytes));
-			AppendToCrc(payloadSizeBytes, sizeof(payloadSizeBytes), { &fileCrc });
 			uint32_t payloadSize = ReadUInt32_LittleEndian(payloadSizeBytes);
 
 			// read chunk type
@@ -177,6 +202,107 @@ namespace cybex_interactive::jtf
 		return jtf;
 	}
 
+	JTF JTFFile::Read(const std::string& filePath, const std::vector<std::string>& requestedChunks, bool verifyFileCrc)
+	{
+		JTF jtf;
+
+		// file existance check
+		std::ifstream file(filePath, std::ios::binary);
+		if (!file)
+			throw std::runtime_error(FileReadError(filePath, "Cannot open file for reading."));
+
+		// analyze requested chunks
+		std::vector<uint32_t> requestedChunkIds;
+		requestedChunkIds.reserve(requestedChunks.size());
+		// we always need the header, holding relevant flags
+		requestedChunkIds.push_back(CHUNK_ID_HEAD);
+		for (auto& name : requestedChunks)
+		{
+			std::optional<uint32_t> id = LookupChunkID(name);
+			if (!id)
+				throw std::runtime_error(FileReadError(filePath, std::format("Requested unsupported chunk name '{}'. Allowed names are: HEAD, HMAP, FEND.", name)));
+			if (*id == CHUNK_ID_HEAD)
+				continue;
+			requestedChunkIds.push_back(*id);
+		}
+
+		ReadValidateSignature(filePath, file);
+
+		// read chunks
+		Crc32 fileCrc;
+		bool fendReached = false;
+		size_t chunksRemaining = requestedChunkIds.size();
+		while (file && !fendReached)
+		{
+			// read chunk length
+			uint8_t payloadSizeBytes[4];
+			ReadToBuffer(filePath, file, &payloadSizeBytes, sizeof(payloadSizeBytes));
+			uint32_t payloadSize = ReadUInt32_LittleEndian(payloadSizeBytes);
+
+			// read chunk type
+			uint32_t chunkType = ReadChunkType(filePath, file);
+
+			// dispatch
+			bool requested = std::find(requestedChunkIds.begin(), requestedChunkIds.end(), chunkType) != requestedChunkIds.end();
+			if (requested)
+			{
+				switch (chunkType)
+				{
+					case CHUNK_ID_HEAD:
+						ReadHeadChunk(filePath, file, payloadSize, fileCrc, jtf);
+						break;
+
+					case CHUNK_ID_HMAP:
+						ReadHmapChunk(filePath, file, payloadSize, fileCrc, jtf);
+						break;
+
+					case CHUNK_ID_FEND:
+						ReadFendChunk(filePath, file, payloadSize, fileCrc);
+						fendReached = true;
+						break;
+
+					default:
+						throw std::runtime_error(FileReadError(filePath, std::format("Unknown chunk type '{}'.", DecodeChunkID(chunkType))));
+				}
+
+				chunksRemaining--;
+
+				// if not verifying file CRC break out early
+				if (chunksRemaining == 0 && !verifyFileCrc) break;
+			}
+			else
+			{
+				// skip payload
+				if (payloadSize > 0)
+				{
+					file.seekg(static_cast<std::streamoff>(payloadSize), std::ios::cur);
+					if (!file)
+						throw std::runtime_error(FileReadError(filePath, "Unexpected EOF while skipping payload."));
+				}
+
+				// read expected chunk crc
+				uint8_t expectedCrcBytes[4];
+				ReadToBuffer(filePath, file, &expectedCrcBytes, sizeof(expectedCrcBytes));
+				AppendToCrc(expectedCrcBytes, sizeof(expectedCrcBytes), { &fileCrc });
+
+				if (chunkType == CHUNK_ID_FEND) fendReached = true;
+			}
+		}
+
+		if (verifyFileCrc) ReadFileCrc(filePath, file, fileCrc);
+
+		return jtf;
+	}
+
+	void JTFFile::ReadValidateSignature(const std::string& filePath, std::ifstream& file)
+	{
+		// read and verify signature
+		uint8_t signature[8];
+		ReadToBuffer(filePath, file, signature, 8/*sizeof(signature)*/);
+		if (!VerifySignature(signature))
+			throw std::runtime_error(FileReadError(filePath, "Invalid file signature."));
+	}
+
 	void JTFFile::ReadHeadChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc, JTF& jtf)
 	{
 		if (payloadSize != 32)
@@ -188,8 +314,8 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'H','E','A','D' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
-		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
+		AppendToCrc(payload.data(), payloadSize, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];
@@ -206,32 +332,32 @@ namespace cybex_interactive::jtf
 		size_t offset = 0;
 
 		// version major
-		jtf.VersionMajor = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionMajor = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 		// version minor
-		jtf.VersionMinor = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionMinor = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 		// version patch
-		jtf.VersionPatch = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.VersionPatch = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 
 		// dimensions
-		jtf.Width = ReadUInt16_LittleEndian(payload.data() + offset);
+		jtf.Header.Width = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
-		jtf.Height = ReadUInt16_LittleEndian(payload.data() + offset);
+		jtf.Header.Height = ReadUInt16_LittleEndian(payload.data() + offset);
 		offset += 2;
 
 		// bit depth
-		jtf.BitDepth = ReadUInt8_LittleEndian(payload.data() + offset);
+		jtf.Header.BitDepth = ReadUInt8_LittleEndian(payload.data() + offset);
 		offset++;
 
 		// RESERVED 8 BYTES ([8..16] = 0 by default)
 		offset += 8;
 
 		// bounds
-		jtf.BoundsLower = ReadInt32_LittleEndian(payload.data() + offset);
+		jtf.Header.BoundsLower = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
-		jtf.BoundsUpper = ReadInt32_LittleEndian(payload.data() + offset);
+		jtf.Header.BoundsUpper = ReadInt32_LittleEndian(payload.data() + offset);
 		offset += 4;
 
 		// RESERVED 8 BYTES ([24..32] = 0 by default)
@@ -243,11 +369,11 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'H','M','A','P' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
 
 		std::vector<uint8_t> payload(payloadSize);
 		ReadToBuffer(filePath, file, payload.data(), payloadSize);
-		AppendToCrc(payload.data(), payloadSize, { &chunkCrc, &fileCrc });
+		AppendToCrc(payload.data(), payloadSize, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];
@@ -260,29 +386,29 @@ namespace cybex_interactive::jtf
 		if (expectedCrc != computedCrc)
 			throw std::runtime_error(FileReadError(filePath, "HMAP CRC mismatch."));
 
-		if (payloadSize % (jtf.BitDepth / 8) != 0)
+		if (payloadSize % (jtf.Header.BitDepth / 8) != 0)
 			throw std::runtime_error(FileReadError(filePath, "HMAP payload size does not match bit depth requirement."));
 
-		size_t sampleCount = payloadSize / (jtf.BitDepth / 8);
-		jtf.HeightSamples.resize(sampleCount);
+		size_t sampleCount = payloadSize / (jtf.Header.BitDepth / 8);
+		jtf.Heights.HeightSamples.resize(sampleCount);
 
-		if (jtf.BitDepth == 32)
+		if (jtf.Header.BitDepth == 32)
 		{
 			for (size_t i = 0; i < sampleCount; ++i)
 			{
 				const uint8_t* pointer = payload.data() + i * 4;
-				jtf.HeightSamples[i] = static_cast<double>(ReadFloat_LittleEndian(pointer));
+				jtf.Heights.HeightSamples[i] = static_cast<double>(ReadFloat_LittleEndian(pointer));
 			}
 		}
-		else if (jtf.BitDepth == 64)
+		else if (jtf.Header.BitDepth == 64)
 		{
 			for (size_t i = 0; i < sampleCount; ++i)
 			{
 				const uint8_t* pointer = payload.data() + i * 8;
-				jtf.HeightSamples[i] = ReadDouble_LittleEndian(pointer);
+				jtf.Heights.HeightSamples[i] = ReadDouble_LittleEndian(pointer);
 			}
 		}
-		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.BitDepth)));
+		else throw std::runtime_error(FileReadError(filePath, std::format("Unsupported bit depth in HMAP chunk, expected [32] or [64] got [{}].", jtf.Header.BitDepth)));
 	}
 
 	void JTFFile::ReadFendChunk(const std::string& filePath, std::ifstream& file, uint32_t payloadSize, Crc32& fileCrc)
@@ -293,7 +419,7 @@ namespace cybex_interactive::jtf
 		Crc32 chunkCrc;
 
 		constexpr char expectedChunkTypeName[4] = { 'F','E','N','D' };
-		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc, &fileCrc });
+		AppendToCrc(reinterpret_cast<const uint8_t*>(expectedChunkTypeName), 4, { &chunkCrc });
 
 		// read expected chunk crc
 		uint8_t expectedCrcBytes[4];

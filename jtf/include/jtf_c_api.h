@@ -42,14 +42,22 @@ extern "C" {
 	/// <summary>Write .jtf file.</summary>
 	/// <param name="path">File path.</param>
 	/// <param name="file">JTF handle to write.</param>
-	/// <returns>JTF_Result code.</returns>
+	/// <returns>JTF_Log information.</returns>
 	JTF_API JTF_Log Write(const char* filePath, uint16_t width, uint16_t height, int32_t boundsLower, int32_t boundsUpper, const double* heights, uint64_t sampleCount);
 
 	/// <summary>Read .jtf file.</summary>
 	/// <param name="path">File path.</param>
 	/// <param name="out_file">Pointer to new JTF handle.</param>
-	/// <returns>JTF_Result code.</returns>
+	/// <returns>JTF_Log information.</returns>
 	JTF_API JTF_Log Read(const char* filePath, JTF** out_file);
+
+	/// <summary>Read .jtf files chunks as requested. "HEAD", holding relevant flags, will always be read.</summary>
+	/// <param name="filePath">File path.</param>
+	/// <param name="requestedChunks">Requested chunk names. "HEAD", "HMAP", etc.</param>
+	/// <param name="verifyFileCrc">Read all chunk CRCs to verify file CRC.</param>
+	/// <param name="out_data">Pointer to new JTF handle.</param>
+	/// <returns>JTF_Log information.</returns>
+	JTF_API JTF_Log ReadRequested(const char* filePath, const std::vector<std::string> requestedChunks, bool verifyFileCrc, JTF** out_data);
 
 	/// <summary>Destroy a JTF file handle and free memory.</summary>
 	JTF_API void Destroy(JTF* file);

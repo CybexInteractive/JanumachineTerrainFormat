@@ -116,7 +116,7 @@ extern "C"
 		}
 	}
 
-	JTF_API JTF_Log ReadRequested(const char* filePath, const std::vector<std::string> requestedChunks, bool verifyFileCrc, JTF** out_data)
+	JTF_API JTF_Log ReadRequested(const char* filePath, JTF_ChunkRequests requestedChunks, bool verifyFileCrc, JTF** out_data)
 	{
 		if (!filePath) return BuildLog(JTF_INVALID_ARGUMENT, "[JTF Read Error] Missing file path. File could not be read.\n");
 		if (!out_data) return BuildLog(JTF_INVALID_ARGUMENT, "[JTF Read Error] Missing out parameter. File could not be read.\n");
@@ -125,7 +125,12 @@ extern "C"
 		{
 			std::unique_ptr<JTF> data(new JTF());
 
-			cybex_interactive::jtf::JTF jtf = cybex_interactive::jtf::JTFFile::Read(filePath, requestedChunks, verifyFileCrc);
+			std::vector<std::string> chunks;
+			chunks.reserve(requestedChunks.count);
+			for (uint32_t i = 0; i < requestedChunks.count; ++i)
+				chunks.emplace_back(requestedChunks.items[i]);
+
+			cybex_interactive::jtf::JTF jtf = cybex_interactive::jtf::JTFFile::Read(filePath, chunks, verifyFileCrc);
 
 			data->VersionMajor = jtf.Header.VersionMajor;
 			data->VersionMinor = jtf.Header.VersionMinor;

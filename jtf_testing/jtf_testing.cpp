@@ -69,19 +69,31 @@ void RunWriteReadTest(const char* filePath, uint16_t width, uint16_t height, int
 	Destroy(file);
 
 	// read test header
-	readResult = ReadRequested(filePath, { "HEAD" }, true, &file);
+	const char* chunks0[] = { "HEAD" };
+	JTF_ChunkRequests request0;
+	request0.items = chunks0;
+	request0.count = 1;
+	readResult = ReadRequested(filePath, request0, true, &file);
 	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
 
 	// read test heights (spelled wrong), no file crc verification
-	readResult = ReadRequested(filePath, { "Hmap" }, false, &file);
+	const char* chunks1[] = {"Hmap"};
+	JTF_ChunkRequests request1;
+	request1.items = chunks1;
+	request1.count = 1;
+	readResult = ReadRequested(filePath, request1, false, &file);
 	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(expectedReadResult, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
 
 	// read test heights (spelled wrong), no file crc verification
-	readResult = ReadRequested(filePath, { "FIZZ" }, false, &file);
+	const char* chunks2[] = { "FIZZ" };
+	JTF_ChunkRequests request2;
+	request2.items = chunks2;
+	request2.count = 1;
+	readResult = ReadRequested(filePath, request2, false, &file);
 	cout << format("Read result:\t\t {} {}:\n{}", ResultCompare(JTF_EXCEPTION, readResult.result), PrintResult(readResult.result), readResult.message) << endl;
 	file = nullptr;
 	Destroy(file);
